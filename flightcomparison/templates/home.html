@@ -1,5 +1,99 @@
-<h1>Airline Flight Comparison Tool</h1>
-
-<h2>Flights would show up here</h2>
-
-<p>I am a flight wooooo</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Airline Flight Comparison </title>
+    <meta name="viewport", content="width=device-width, initial-scale=1">
+<style>
+    .sidebar {
+        height: 100%;
+        width: 150px;
+        position: absolute;
+        left:0;
+        right:0;
+        background-color: lightblue;
+    }
+    .sidebar div {
+        padding: 8px;
+        font-size: 24px;
+        display: block;
+    }
+    .container {
+        margin-left: 150px;
+        font-size: 18px;
+    }
+    /* button classes */
+    .side-button-table{
+        width: 100%; 
+    }
+    .side-button {
+        background-color: blue;
+        width: 100%;
+        color: white;
+        text-align: center;
+        display: inline-block;
+        font-size: 20px;
+    }
+    .side-button:hover {
+        background-color: white;
+        color: black;
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+    .page-button{
+        background-color: blue;
+        color: white;
+        text-align: center;
+        display: inline-block;
+        font-size: 20px;
+    }
+    .page-button:hover {
+        background-color: white;
+        color: black;
+        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+</style>
+</head>
+<!-- SIDEBAR -->
+<div class ="sidebar">
+    <div>Airline Flight Comparison</div>  
+    <button class="button side-button"><a href="{% url 'home'%}"></a>Home</button>
+    <button class="button side-button">Flight Search</button>
+</div>
+<!-- PAGE HEADER -->
+<div class="container" style="text-align:center">
+    <h1>Airline Flight Comparison</h1>
+    <h2>Group 3 Spring 2024</h2>
+</div>
+<!-- DATABASE DATA -->
+<div class="container">
+    <h2 style="text-align:center">Current Available Flights </h2>
+    {% if flights %}
+        <table>
+            <tr>
+                <th style="font-size:125%">Departure</th>
+                <th></th>
+                <th style="font-size:125%">Arrival</th>
+                <th></th>
+                <th style="font-size:125%">Departure Time</th>
+                <th></th>
+                <th style="font-size:125%">Arrival Time</th>
+                <th colspan="3"></th>
+        </tr>
+        {% for flight in flights %}
+        <tr>
+            <td>{{flight.departure_location}}</td>
+            <td></td>
+            <td>{{flight.arrival_location}}</td>
+            <td></td>
+            <td>{{flight.departure_time }}</td>
+            <td></td>
+            <td>{{flight.arrival_time}}</td>
+            <td><button class="page-button">View More</button></td>
+        </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <p>No Flights currently in database</p>
+    {% endif %}
+</div>
+<div 
+</html>
