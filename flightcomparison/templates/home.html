@@ -1,99 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> Airline Flight Comparison </title>
-    <meta name="viewport", content="width=device-width, initial-scale=1">
+    <title>Airline Flight Comparison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
 <style>
+    body, html {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+       /* background-image: url('https://img.freepik.com/premium-photo/top-view-white-toy-airplane-model-blue-color-background-concept-travel_43448-410.jpg'); /*
+       /* background-size: cover;      */
+       /* background-position: center; */
+       /* background-repeat: no-repeat; */
+       /* background-attachment: fixed; */
+    }
     .sidebar {
         height: 100%;
         width: 150px;
-        position: absolute;
-        left:0;
-        right:0;
-        background-color: lightblue;
+        position: fixed;
+        left: 0;
+        background-color: #ADD8E6; /* Adjusted to a lighter blue */
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
-    .sidebar div {
-        padding: 8px;
-        font-size: 24px;
+    .sidebar a {
+        padding: 12px 15px; /* Adjusted padding for a tighter fit */
+        font-size: 20px; /* Reduced font size */
         display: block;
+        text-decoration: none;
+        color: white;
+        background-color: #0000FF; /* Adjusted to a pure blue color */
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .sidebar a:hover, .sidebar a:active {
+        background-color: #000080; /* Darker blue on hover */
+        color: white;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.2); /* Shadow effect for active state */
     }
     .container {
         margin-left: 150px;
-        font-size: 18px;
+        padding: 15px;
+        font-size: 16px; /* Reduced font size for content */
     }
-    /* button classes */
-    .side-button-table{
-        width: 100%; 
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px; /* Added bottom margin for spacing */
     }
-    .side-button {
-        background-color: blue;
+    .header h1 {
+        font-size: 22px; /* Adjusted title font size */
+        margin: 0; /* Reset margin for h1 */
+    }
+    .header .group {
+        text-align: right;
+        font-size: 16px; /* Adjusted font size for group info */
+    }
+    table {
         width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    tr:hover {
+        background-color: #f5f5f5; /* Hover state for table rows */
+    }
+    .page-button {
+        background-color: #0000FF; /* Adjusted to a pure blue color */
         color: white;
-        text-align: center;
-        display: inline-block;
-        font-size: 20px;
+        padding: 8px 16px; /* Adjusted padding */
+        font-size: 16px; /* Adjusted font size */
+        border: none;
+        cursor: pointer; /* Cursor pointer to indicate clickable */
+        transition: background-color 0.3s;
     }
-    .side-button:hover {
-        background-color: white;
-        color: black;
-        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-    }
-    .page-button{
-        background-color: blue;
+    .page-button:hover, .page-button:active {
+        background-color: #000080; /* Darker blue on hover and active */
         color: white;
-        text-align: center;
-        display: inline-block;
-        font-size: 20px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.2); /* Shadow effect for active state */
     }
-    .page-button:hover {
-        background-color: white;
-        color: black;
-        box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    /* Responsive layout for mobile */
+    @media (max-width: 600px) {
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: relative;
+        }
+        .container {
+            margin-left: 0;
+        }
+        .header {
+            flex-direction: column;
+            text-align: center;
+        }
+        .header .group {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .page-button {
+            width: 100%;
+        }
     }
 </style>
 </head>
-<!-- SIDEBAR -->
-<div class ="sidebar">
-    <div>Airline Flight Comparison</div>  
-    <button class="button side-button"><a href="{% url 'home'%}"></a>Home</button>
-    <button class="button side-button"><a href="{% url 'flight_search'%}"></a>Flight Search</button>
-</div>
-<!-- PAGE HEADER -->
-<div class="container" style="text-align:center">
-    <h1>Airline Flight Comparison</h1>
-    <h2>Group 3 Spring 2024</h2>
-</div>
-<!-- DATABASE DATA -->
-<div class="container">
-    <h2 style="text-align:center">Current Available Flights </h2>
-    {% if flights %}
-        <table>
-            <tr>
-                <th style="font-size:125%">Departure</th>
-                <th></th>
-                <th style="font-size:125%">Arrival</th>
-                <th></th>
-                <th style="font-size:125%">Departure Time</th>
-                <th></th>
-                <th style="font-size:125%">Arrival Time</th>
-                <th colspan="3"></th>
-        </tr>
-        {% for flight in flights %}
-        <tr>
-            <td>{{flight.departure_location}}</td>
-            <td></td>
-            <td>{{flight.arrival_location}}</td>
-            <td></td>
-            <td>{{flight.departure_time }}</td>
-            <td></td>
-            <td>{{flight.arrival_time}}</td>
-            <td><button class="page-button">View More</button></td>
-        </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <p>No Flights currently in database</p>
-    {% endif %}
-</div>
-<div 
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'home'%}">Home</a>
+        <a href="#">Flight Search</a>
+    </div>
+    <!-- PAGE CONTENT -->
+    <div class="container">
+        <div class="header">
+            <h1>Airline Flight Comparison</h1>
+            <div class="group">Group 3 Spring 2024</div>
+        </div>
+        <h2 style="text-align: center;">Current Available Flights</h2>
+        {% if flights %}
+            <table>
+                <tr>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Actions</th>
+                </tr>
+                {% for flight in flights %}
+                <tr>
+                    <td>{{ flight.departure_location }}</td>
+                    <td>{{ flight.arrival_location }}</td>
+                    <td>{{ flight.departure_time }}</td>
+                    <td>{{ flight.arrival_time }}</td>
+                    <td><button class="page-button">View More</button></td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No Flights currently in the database.</p>
+        {% endif %}
+    </div>
+</body>
 </html>
+
