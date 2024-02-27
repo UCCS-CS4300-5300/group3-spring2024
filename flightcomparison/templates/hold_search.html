@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Airline Flight Comparison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .sidebar {
+            height: 100%;
+            width: 150px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            background-color: lightblue;
+        }
+        .sidebar div {
+            padding: 8px;
+            font-size: 24px;
+            display: block;
+        }
+        .container {
+            margin-left: 150px;
+            font-size: 18px;
+        }
+        .side-button-table{
+            width: 100%; 
+        }
+        .side-button {
+            background-color: blue;
+            width: 100%;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+        }
+        .side-button:hover {
+            background-color: white;
+            color: black;
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
+        .page-button {
+            background-color: blue;
+            color: white;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+        }
+        .page-button:hover {
+            background-color: white;
+            color: black;
+            box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-container input[type=text] {
+            padding: 10px;
+            margin-top: 10px;
+            width: 30%;
+            border: none;
+            border-radius: 5px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-container button:hover {
+            background: #0a5b8a;
+        }
+    </style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div>Airline Flight Comparison</div>  
+    <button class="button side-button"><a href="{% url 'home'%}">Home</a></button>
+    <button class="button side-button"><a href="{% url 'flight_search'%}">Flight Search</a></button>
+</div>
+<!-- PAGE HEADER -->
+<div class="container" style="text-align:center">
+    <h1>Airline Flight Comparison</h1>
+    <h2>Group 3 Spring 2024</h2>
+</div>
+<div class="container">
+    <h2>Flight Search</h2>
+    <form method="GET" action="{% url 'flight_search' %}">
+        <input type="text" name="departure_location" placeholder="Departure Location">
+        <input type="datetime-local" name="departure_time" placeholder="Departure Time">
+        <input type="number" name="price" placeholder="Price">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<!-- Display search results here -->
+<div class="container">
+    <!-- Display search results -->
+    {% if flights %}
+        <h2>Search Results</h2>
+        <ul>
+            {% for flight in flights %}
+                <li>{{ flight.departure_location }}, {{ flight.departure_time }}, {{ flight.price }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No flights found.</p>
+    {% endif %}
+</div>
+</body>
+</body>
+</html>
+Update the flight_
+<!-- DATABASE DATA -->
+<div class="container">
+    <h2 style="text-align:center">Current Available Flights </h2>
+    {% if flights %}
+        <table>
+            <tr>
+                <th style="font-size:125%">Departure</th>
+                <th style="font-size:125%">Arrival</th>
+                <th style="font-size:125%">Departure Time</th>
+                <th style="font-size:125%">Arrival Time</th>
+                <th style="font-size:125%">Price</th>
+                <th style="font-size:125%">Seat Number</th>
+            </tr>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.departure_location }}</td>
+                <td>{{ flight.arrival_location }}</td>
+                <td>{{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_time }}</td>
+                <td>{{ flight.price }}</td>
+                <td>{{ flight.seat_number }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No Flights currently in database</p>
+    {% endif %}
+</div>
+</body>
+</html>
