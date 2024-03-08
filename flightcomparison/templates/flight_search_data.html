@@ -11,25 +11,39 @@
     </h5>
     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
         <div class="accordion-body">
-            <div class="container">
-                <form method="POST" action="{% url 'flight_search_data' %}" style="text-align: center;">
-                    {% csrf_token %}
+            <form method="POST" action="{% url 'flight_search_data' %}" style="text-align: center;">
+                {% csrf_token %}
+                <!--First flight-->
+                <p>
                     <label for="flight1">Flight 1:</label>
                     <select name="flight1" id="flight1">
                         {% for flight in flights %}
                         <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
                         {% endfor %}
                     </select>
-                    
+                </p>
+                <!--Second flight-->
+                <p>
                     <label for="flight2">Flight 2:</label>
                     <select name="flight2" id="flight2">
                         {% for flight in flights %}
                         <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
                         {% endfor %}
                     </select>
-                    <button class="btn btn-primary" type="submit" style="padding: 10px 100px;">Compare</button>
-                </form>
-            </div>
+                </p>
+                <!--Sorting option-->
+                <p>
+                    <label for="sortoption">Sort Option:</label>
+                    <select name="sortoption" id="sort">
+                        <option value="price">Price</option>
+                        <option value="earlydepart">Earliest Departure</option>
+                        <option value="latestdepart">Latest Departure</option>
+                        <option value="earlyarrival">Earliest Arrival</option>
+                        <option value="latestarrival">Latest Arrival</option>
+                    </select>
+                </p>
+                <button class="btn btn-primary" type="submit" style="padding: 10px 100px;">Compare</button>
+            </form>
         </div>
     </div>
 </div>

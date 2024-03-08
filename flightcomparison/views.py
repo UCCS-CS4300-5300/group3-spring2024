@@ -28,9 +28,10 @@ def flight_search_data(request):
     if request.method == 'POST':
         flight1 = request.POST.get('flight1', '')
         flight2 = request.POST.get('flight2', '')
+        sort = request.POST.get('sortoption', '')
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
-        return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id)
+        return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
     
     departure_location = request.GET.get('departure_location', '')
     departure_time = request.GET.get('departure_time', '')
@@ -49,8 +50,8 @@ def flight_search_data(request):
     return render(request, 'flight_search_data.html', {'flights': flights})
 
 
-def compare(request, flight_1_id, flight_2_id):
+def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
 
-    return render(request, 'flight_compare.html', {'flight1': flight1, 'flight2': flight2})
+    return render(request, 'flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
