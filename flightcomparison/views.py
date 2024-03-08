@@ -23,7 +23,15 @@ def flight_search(request):
     data = json.loads((binary).decode())
     return render(request, 'flight_search_blank.html', {'flights': data['data']})
 
-def flight_search_data(request): 
+def flight_search_data(request):
+    #for comparison
+    if request.method == 'POST':
+        flight1 = request.POST.get('flight1', '')
+        flight2 = request.POST.get('flight2', '')
+        flight1 = get_object_or_404(Flight, pk=flight1)
+        flight2 = get_object_or_404(Flight, pk=flight2)
+        return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id)
+    
     departure_location = request.GET.get('departure_location', '')
     departure_time = request.GET.get('departure_time', '')
     price = request.GET.get('price', '')
@@ -36,13 +44,13 @@ def flight_search_data(request):
     if price:
         flights = flights.filter(price=price)
 
+    for flight in flights:
+        print(flight.id)
     return render(request, 'flight_search_data.html', {'flights': flights})
 
 
-'''
-Compare views (for flight comparisons)
-'''
-#have no flights to compare to
-def compare(request):
-    return render(request, 'compare/compare_blank.html')
-#Have one flight to compare to
+def compare(request, flight_1_id, flight_2_id):
+    flight1 = get_object_or_404(Flight, pk=flight_1_id)
+    flight2 = get_object_or_404(Flight, pk=flight_2_id)
+
+    return render(request, 'flight_compare.html', {'flight1': flight1, 'flight2': flight2})

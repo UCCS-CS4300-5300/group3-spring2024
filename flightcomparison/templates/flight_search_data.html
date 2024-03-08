@@ -2,7 +2,39 @@
 
 {% block flightSearch %}
 {% if flights %}
+<!--Comparison accordion-->
+<div class="accordion">
+    <h5 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Compare Flights
+        </button>                
+    </h5>
+    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
+        <div class="accordion-body">
+            <div class="container">
+                <form method="POST" action="{% url 'flight_search_data' %}" style="text-align: center;">
+                    {% csrf_token %}
+                    <label for="flight1">Flight 1:</label>
+                    <select name="flight1" id="flight1">
+                        {% for flight in flights %}
+                        <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label for="flight2">Flight 2:</label>
+                    <select name="flight2" id="flight2">
+                        {% for flight in flights %}
+                        <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit" style="padding: 10px 100px;">Compare</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
         <h2>Search Results</h2>
+        <!--All search results for flight-->
         <div class="accordion">
             {% for flight in flights %}
             <div class="accordion-item border-0">
@@ -10,7 +42,7 @@
                     {{flight.departure_location}} to {{flight.arrival_location}}, Departure Time: {{flight.departure_time}}, Price: ${{flight.price}}
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</button>
                 </h5>
-                <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne">
                     <div class="accordion-body">
                       <ul style="list-style-type: none;">
                         <li><strong>{{flight.departure_location}} to {{flight.arrival_location}}</strong></li>
@@ -27,4 +59,5 @@
     {% else %}
         <p>No flights found for search query.</p>
     {% endif %}
+    
 {% endblock %}
