@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-tr@ja-!b&^k332b5mn78yn1dx27g_^j2t@o_azc&yup13q#d9g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".replit.dev", ".replit.app", "127.0.0.1"]
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
