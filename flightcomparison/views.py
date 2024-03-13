@@ -30,7 +30,7 @@ def home(request):
   response = serializers.FlightListView.get(request)
   binary = response.content
   data = json.loads((binary).decode())
-  return render(request, 'home.html', {'flights': data['data']})
+  return render(request, 'flightcomparison/home.html', {'flights': data['data']})
 
 def flight_search(request):
     response = serializers.FlightListView.get(request)
