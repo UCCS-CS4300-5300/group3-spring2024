@@ -16,6 +16,7 @@ class FlightListView(View):
         
         data = [
             {
+                'id': flight.id,
                 'user': flight.user.username,
                 'departure_location': flight.departure_location,
                 'arrival_location': flight.arrival_location,

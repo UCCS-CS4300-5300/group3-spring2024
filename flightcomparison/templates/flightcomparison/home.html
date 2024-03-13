@@ -8,7 +8,7 @@
             <div class="accordion-item border-0">
                 <h5 class="acordion-header">
                     Flight from {{flight.departure_location}} to {{flight.arrival_location}}
-                    <button><a button class="btn btn-primary" href="{% url 'flight_detail' flight.id %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</a></button>
+                    <a button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</a>
                 </h5>
                 <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
@@ -17,6 +17,7 @@
                         <li>Arrival Time: {{flight.arrival_time}}</li>
                         <li>Price: ${{flight.price}}</li>
                         <li>Airline: United</li>
+                        <li><a button class="btn btn-primary" type="button" href="{% url 'flight_detail' flight.id %}">More Details</a></li>
                       </ul>
                     </div>
                   </div>
