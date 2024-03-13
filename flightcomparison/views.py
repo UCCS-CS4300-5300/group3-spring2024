@@ -10,12 +10,31 @@ from .models import *
 '''
 General Views
 '''
+class FlightList(generic.ListView):
+    model = Flight
+
+class FlightDetail(generic.DetailView):
+
+    model = Flight
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+
+        flight_instance = FlightList()
+        flight_list = flight_instance.get_queryset()
+
+        context['flight_list'] = flight_list
+
+        return context
+
 #home view
 def home(request):
   response = serializers.FlightListView.get(request)
   binary = response.content
   data = json.loads((binary).decode())
-  return render(request, 'home.html', {'flights': data['data']})
+  flight_instance = FlightList()
+  flight_list = flight_instance.get_queryset()
+  return render(request, 'flightcomparison/home.html', {'flight_list': flight_list})
+
 
 def flight_search(request):
     if request.method == 'GET':
@@ -24,6 +43,7 @@ def flight_search(request):
         price = request.GET.get('price', '')
 
         flights = Flight.objects.all()
+
         if departure_location:
             flights = flights.filter(departure_location__icontains=departure_location)
         if departure_time:
@@ -31,6 +51,7 @@ def flight_search(request):
         if price:
             flights = flights.filter(price=price)
 
-        return render(request, 'flight_search.html', {'flights': flights})
+        return render(request, 'flightcomparison/flight_search.html', {'flights': flights})
     else:
-        return render(request, 'flight_search.html')
+        return render(request, 'flightcomparison/flight_search.html')
+

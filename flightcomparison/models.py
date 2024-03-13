@@ -16,3 +16,6 @@ class Flight(models.Model):
 
     def __str__(self):
         return self.user.username + ": " + self.departure_location + " to " + self.arrival_location
+
+    def get_absolute_url(self):
+        return reverse('flight_detail', args=[str(self.id)])
