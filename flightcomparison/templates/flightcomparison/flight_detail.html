@@ -1,0 +1,50 @@
+{% extends "flightcomparison/application.html" %}
+{% block content %}
+
+
+<div class="container">
+    <!-- Display Flight Data -->
+    <h2>Flight From: "{{ flight.departure_location }}" To: "{{ flight.arrival_location }}"</h2>
+
+</div>
+<!-- DATABASE DATA -->
+<div class="container">
+    <ul>
+    <p>
+        <b>Departure Time:</b>
+        <span class="right-aligned-container">{{ flight.departure_time }}</span>
+    </p>
+    <p>
+        <b>Arrival Time:</b> 
+        <span class="right-aligned-container">{{ flight.arrival_time }}</span>
+    </p>
+    <p>
+        <b>Price:</b> 
+        <span class="right-aligned-container">${{ flight.price }}</span>
+    </p>
+    <p>
+        <b>Seat Number:</b> 
+        <span class="right-aligned-container">{{ flight.seat_number }}</span>
+    </p>
+    
+    <p>
+        <b>Airline:</b> 
+        <span class="right-aligned-container">[Insert airline]</span>
+    </p>
+  
+    <p>
+        <b>Number of Stops:</b> 
+        <span class="right-aligned-container">[Insert # of Stops]</span>
+    </p>
+    <p>
+        <b>Checked Baggage:</b> 
+        <span class="right-aligned-container">[Insert # of Complimentary checked baggage]</span>
+    </p>
+    <p>
+        <b>Carry on Allowance:</b> 
+        <span class="right-aligned-container">[Insert# of carry on bags a passenger may take]</span>
+    </p>
+    </ul>
+</div>
+    
+{% endblock %}

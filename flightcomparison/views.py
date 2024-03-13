@@ -10,6 +10,21 @@ from .models import *
 '''
 General Views
 '''
+class FlightList(generic.ListView):
+    model = Flight
+
+class FlightDetail(generic.DetailView):
+
+    model = Flight
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)   
+
+        flight_instance = FlightList()
+        flight_list = flight_instance.get_queryset()
+
+        context['flight_list'] = flight_list
+
+        return context
 #home view
 def home(request):
   response = serializers.FlightListView.get(request)
@@ -21,7 +36,7 @@ def flight_search(request):
     response = serializers.FlightListView.get(request)
     binary = response.content
     data = json.loads((binary).decode())
-    return render(request, 'flight_search_blank.html', {'flights': data['data']})
+    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data']})
 
 def flight_search_data(request):
     #for comparison
@@ -47,11 +62,11 @@ def flight_search_data(request):
 
     for flight in flights:
         print(flight.id)
-    return render(request, 'flight_search_data.html', {'flights': flights})
+    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights})
 
 
 def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
 
-    return render(request, 'flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
+    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
