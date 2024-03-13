@@ -1,7 +1,8 @@
 {% extends "application.html" %}
+{% load i18n %}
 {% block content %}
 <div class="container">
-    <h2 style="text-align: center;">Flight Search</h2>
+    <h2 style="text-align: center;">{% trans "Flight Search" %}</h2>
     <form method="GET" action="{% url 'flight_search_data' %}" style="text-align: center;">
         <p>
             Departure: <input type="text" name="departure_location" placeholder="Departure Location">

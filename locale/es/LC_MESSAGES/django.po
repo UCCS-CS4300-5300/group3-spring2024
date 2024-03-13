@@ -1,0 +1,132 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-12 21:44-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\flightcomparison\templates\application.html:5
+#: .\flightcomparison\templates\application.html:186
+msgid "Airline Flight Comparison"
+msgstr "Herramienta de comparación de vuelos de aerolíneas"
+
+#: .\flightcomparison\templates\application.html:165
+msgid "Home"
+msgstr "Pagina de inicio"
+
+#: .\flightcomparison\templates\application.html:171
+#: .\flightcomparison\templates\flight_search.html:5
+msgid "Flight Search"
+msgstr "Búsqueda de vuelos"
+
+#: .\flightcomparison\templates\flight_compare.html:5
+msgid "Comparing Flights"
+msgstr ""
+
+#: .\flightcomparison\templates\flight_compare.html:8
+#, fuzzy
+#| msgid "Flight Search"
+msgid "Flight"
+msgstr "Búsqueda de vuelos"
+
+#: .\flightcomparison\templates\flight_compare.html:9
+msgid "Departure Location"
+msgstr "Lugar de Salida"
+
+#: .\flightcomparison\templates\flight_compare.html:10
+msgid "Arrival Location"
+msgstr "Lugar de Llegada"
+
+#: .\flightcomparison\templates\flight_compare.html:11
+#: .\flightcomparison\templates\flight_search_blank.html:19
+#: .\flightcomparison\templates\flight_search_data.html:65
+msgid "Departure Time"
+msgstr "Hora de Salida"
+
+#: .\flightcomparison\templates\flight_compare.html:12
+#: .\flightcomparison\templates\flight_search_blank.html:20
+#: .\flightcomparison\templates\flight_search_data.html:66
+msgid "Arrival Time"
+msgstr "Hora de llegada"
+
+#: .\flightcomparison\templates\flight_compare.html:13
+#: .\flightcomparison\templates\flight_search_blank.html:21
+#: .\flightcomparison\templates\flight_search_data.html:67
+msgid "Price"
+msgstr "Precio"
+
+#: .\flightcomparison\templates\flight_compare.html:14
+#: .\flightcomparison\templates\flight_search_blank.html:22
+#: .\flightcomparison\templates\flight_search_data.html:68
+msgid "Airline"
+msgstr "Aerolínea"
+
+#: .\flightcomparison\templates\flight_search_blank.html:6
+msgid "Recommended Flights"
+msgstr "Vuelos recomendados"
+
+#: .\flightcomparison\templates\flight_search_blank.html:11
+#, fuzzy
+#| msgid "Flight Search"
+msgid "Flight from"
+msgstr "Búsqueda de vuelos"
+
+#: .\flightcomparison\templates\flight_search_blank.html:11
+#: .\flightcomparison\templates\flight_search_data.html:64
+msgid "to"
+msgstr "a"
+
+#: .\flightcomparison\templates\flight_search_blank.html:13
+#: .\flightcomparison\templates\flight_search_data.html:59
+msgid "View More"
+msgstr "Ver Más"
+
+#: .\flightcomparison\templates\flight_search_blank.html:30
+#: .\flightcomparison\templates\home.html:28
+msgid "No Flights currently in the database."
+msgstr "No hay vuelos actuales en la base de datos"
+
+#: .\flightcomparison\templates\flight_search_data.html:10
+msgid "Compare Flights"
+msgstr "Comparar Vuelos"
+
+#: .\flightcomparison\templates\flight_search_data.html:19
+#, fuzzy
+#| msgid "Flight Search"
+msgid "Flight 1"
+msgstr "Vuelo 1"
+
+#: .\flightcomparison\templates\flight_search_data.html:28
+#, fuzzy
+#| msgid "Flight Search"
+msgid "Flight 2"
+msgstr "Vuelo 2"
+
+#: .\flightcomparison\templates\flight_search_data.html:37
+msgid "Sort Option"
+msgstr "Opción de clasificación"
+
+#: .\flightcomparison\templates\flight_search_data.html:51
+msgid "Search Results"
+msgstr "Resultados de la búsqueda"
+
+#: .\flightcomparison\templates\flight_search_data.html:76
+msgid "No flights found for search query."
+msgstr "No se encontraron vuelos en la consulta de búsqueda"
+
+#: .\flightcomparison\templates\home.html:5
+msgid "Current Available Flights"
+msgstr "Vuelos disponibles actualmente"

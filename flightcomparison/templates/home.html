@@ -1,7 +1,8 @@
 {% extends "application.html" %}
+{% load i18n %}
 
 {% block content %}
-    <h2 style="text-align: center;">Current Available Flights</h2>
+<h2 style="text-align: center;">{% trans "Current Available Flights" %}</h2>
     {% if flights %}
         <div class="accordion">
             {% for flight in flights %}
@@ -24,6 +25,6 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No Flights currently in the database.</p>
+    <p>{% trans "No Flights currently in the database." %}</p>
     {% endif %}
 {% endblock %}

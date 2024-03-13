@@ -1,4 +1,5 @@
 {% extends 'flight_search.html' %}
+{% load i18n %}
 
 {% block flightSearch %}
 {% if flights %}
@@ -6,7 +7,7 @@
 <div class="accordion">
     <h5 class="accordion-header">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Compare Flights
+            {% trans "Compare Flights" %}
         </button>                
     </h5>
     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
@@ -15,7 +16,7 @@
                 {% csrf_token %}
                 <!--First flight-->
                 <p>
-                    <label for="flight1">Flight 1:</label>
+                    <label for="flight1">{% trans "Flight 1" %}:</label>
                     <select name="flight1" id="flight1">
                         {% for flight in flights %}
                         <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
@@ -24,7 +25,7 @@
                 </p>
                 <!--Second flight-->
                 <p>
-                    <label for="flight2">Flight 2:</label>
+                    <label for="flight2">{% trans "Flight 2" %}:</label>
                     <select name="flight2" id="flight2">
                         {% for flight in flights %}
                         <option value="{{ flight.id }}">{{ flight.departure_location }} to {{flight.arrival_location}} at {{flight.departure_time}}</option>
@@ -33,7 +34,7 @@
                 </p>
                 <!--Sorting option-->
                 <p>
-                    <label for="sortoption">Sort Option:</label>
+                    <label for="sortoption">{% trans "Sort Option" %}:</label>
                     <select name="sortoption" id="sort">
                         <option value="price">Price</option>
                         <option value="earlydepart">Earliest Departure</option>
@@ -47,23 +48,24 @@
         </div>
     </div>
 </div>
-        <h2>Search Results</h2>
+<h2>{% trans "Search Results" %}</h2>
         <!--All search results for flight-->
         <div class="accordion">
             {% for flight in flights %}
             <div class="accordion-item border-0">
                 <h5 class="acordion-header">
                     {{flight.departure_location}} to {{flight.arrival_location}}, Departure Time: {{flight.departure_time}}, Price: ${{flight.price}}
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</button>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
+                        {% trans "View More" %}
                 </h5>
                 <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne">
                     <div class="accordion-body">
                       <ul style="list-style-type: none;">
-                        <li><strong>{{flight.departure_location}} to {{flight.arrival_location}}</strong></li>
-                        <li>Departure Time: {{flight.departure_time}}</li>
-                        <li>Arrival Time: {{flight.arrival_time}}</li>
-                        <li>Price: ${{flight.price}}</li>
-                        <li>Airline: United</li>
+                        <li><strong>{{flight.departure_location}} {% trans "to" %} {{flight.arrival_location}}</strong></li>
+                        <li>{% trans "Departure Time" %}: {{flight.departure_time}}</li>
+                        <li>{% trans "Arrival Time" %}: {{flight.arrival_time}}</li>
+                        <li>{% trans "Price" %}: ${{flight.price}}</li>
+                        <li>{% trans "Airline" %}: United</li>
                       </ul>
                     </div>
                   </div>
@@ -71,7 +73,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No flights found for search query.</p>
+    <p>{% trans "No flights found for search query." %}</p>
     {% endif %}
     
 {% endblock %}

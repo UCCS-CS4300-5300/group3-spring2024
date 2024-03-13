@@ -1,22 +1,25 @@
 {% extends 'flight_search.html' %}
+{% load i18n %}
 
 {% block flightSearch %}
 {% if flights %}
-<h2>Recomended Flights:</h2>
+<h2>{% trans "Recommended Flights" %}:</h2>
 <div class="accordion">
     {% for flight in flights %}
     <div class="accordion-item border-0">
         <h5 class="acordion-header">
-            Flight from {{flight.departure_location}} to {{flight.arrival_location}}
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</button>
+            {% trans "Flight from" %} {{flight.departure_location}} {% trans "to" %} {{flight.arrival_location}}
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">
+                {% trans "View More" %}
+            </button>
         </h5>
         <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
               <ul style="list-style-type: none;">
-                <li>Departure Time: {{flight.departure_time}}</li>
-                <li>Arrival Time: {{flight.arrival_time}}</li>
-                <li>Price: ${{flight.price}}</li>
-                <li>Airline: United</li>
+                <li>{% trans "Departure Time" %}: {{flight.departure_time}}</li>
+                <li>{% trans "Arrival Time" %}: {{flight.arrival_time}}</li>
+                <li>{% trans "Price" %}: ${{flight.price}}</li>
+                <li>{% trans "Airline" %}: United</li>
               </ul>
             </div>
           </div>
@@ -24,6 +27,6 @@
     {% endfor %}
 </div>
 {% else %}
-<p>No Flights currently in the database.</p>
+<p>{% trans "No Flights currently in the database." %}</p>
 {% endif %}
 {% endblock %}

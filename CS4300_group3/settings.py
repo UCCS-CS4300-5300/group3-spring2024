@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'CS4300_group3.urls'
@@ -105,9 +106,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+LANGUAGES = [
+    ('en', 'English'),
+    ('es', 'Spanish'),
+    # Additional languages here
+]
+
+LOCALE_PATHS = (BASE_DIR / 'locale', )
+
 TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

@@ -1,16 +1,17 @@
 {% extends 'flight_search.html' %}
+{% load i18n %}
 
 {% block flightSearch %}
-<h2>Comparing Flights</h2>
+<h2>{% trans "Comparing Flights" %}</h2>
 <table>
     <tr>
-        <th>Flight</th>
-        <th>Departure Location</th>
-        <th>Arrival Location</th>
-        <th>Departure Time</th>
-        <th>Arrival Time</th>
-        <th>Price</th>
-        <th>Airline</th>
+        <th>{% trans "Flight" %}</th>
+        <th>{% trans "Departure Location" %}</th>
+        <th>{% trans "Arrival Location" %}</th>
+        <th>{% trans "Departure Time" %}</th>
+        <th>{% trans "Arrival Time" %}</th>
+        <th>{% trans "Price" %}</th>
+        <th>{% trans "Airline" %}</th>
     </tr>
     <tr>
         <th>Flight 1</th>
