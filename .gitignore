@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+CS4300_group3/__pycache__/
+flightcomparison/__pycache__/
 *.py[cod]
 *$py.class
 
