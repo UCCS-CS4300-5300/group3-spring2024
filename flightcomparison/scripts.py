@@ -6,6 +6,8 @@ Python scripts that I wasnt sure where to put
 '''
 '''
 Script that parses airport CSV file to find matching departure and arrival airport
+Inputs: departure, arrival are user generated text for departure location and arrival location
+Returns: tuple containing list of possible departure and arrival points, each in their own list with syntax [icao, airport name]
 '''
 def find_airports(departure, arrival):
     #gets location of current file, helps to reference csv file
@@ -18,7 +20,7 @@ def find_airports(departure, arrival):
         #Rows in airport-codes.csv have this format:
         #ICAO code,type,name,elevation_ft,continent,iso_country,iso_region,municipality,gps_code,iata_code,local_code,coordinates
         for row in reader:
-            #parses out all non airports (helipads)
+            #parses out all non airports (helipads), and closed airports
             if "airport" in row[1] and 'closed' not in row[1]:
                 flight = [row[0], row[2]]
                 if departure in flight[1]:
