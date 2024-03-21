@@ -6,6 +6,7 @@ from django.views import generic
 import json
 from . import serializers
 from .models import *
+from django.templatetags.static import static
 
 '''
 General Views
@@ -33,10 +34,11 @@ def home(request):
   return render(request, 'flightcomparison/home.html', {'flights': data['data']})
 
 def flight_search(request):
+    static_url = static('data/airport-codes.csv')
     response = serializers.FlightListView.get(request)
     binary = response.content
     data = json.loads((binary).decode())
-    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data']})
+    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data'], 'static_url': static_url})
 
 def flight_search_data(request):
     #for comparison
@@ -47,7 +49,7 @@ def flight_search_data(request):
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
         return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
-    
+    static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
     departure_time = request.GET.get('departure_time', '')
     price = request.GET.get('price', '')
@@ -60,9 +62,7 @@ def flight_search_data(request):
     if price:
         flights = flights.filter(price=price)
 
-    for flight in flights:
-        print(flight.id)
-    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights})
+    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights, 'static_url': static_url})
 
 
 def compare(request, flight_1_id, flight_2_id, sort):
