@@ -49,6 +49,7 @@ def flight_search_data(request):
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
         return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
+    
     static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
     departure_time = request.GET.get('departure_time', '')
@@ -56,7 +57,7 @@ def flight_search_data(request):
 
     flights = Flight.objects.all()
     if departure_location:
-        flights = flights.filter(departure_location__icontains=departure_location)
+        flights = flights.filter(departure_location__icontains=departure_location[7:])
     if departure_time:
         flights = flights.filter(departure_time=departure_time)
     if price:
