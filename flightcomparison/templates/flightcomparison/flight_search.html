@@ -4,15 +4,13 @@
     <h2 style="text-align: center;">Flight Search</h2>
     <form autocomplete="off" method="GET" action="{% url 'flight_search_data' %}" style="text-align: center;">
         <div class="autocomplete">
-            Departure: <input type="text" id="departureInput" name="departure_location" placeholder="Departure Location">
-            <div id="departureOptions" class="suggestions"></div>
+            Departure: <input type="text" id="departureInput" name="departure_location" placeholder="Departure Location"> 
             Arrival: <input type="text" id="arrivalInput" name="arrival_location" placeholder="Arrival Location">
-            <div id="arrivalOptions" class="suggestions"></div>   
-        </div>
-        <p>
             Departure Time: <input type="datetime-local" name="departure_time" placeholder="Departure Time">
             Price: <input type="number" name="price" placeholder="Price">
-        </p>
+            <div id="departureOptions" class="suggestions"></div>
+            <div id="arrivalOptions" class="suggestions"></div>   
+        </div>
         <button class="btn btn-primary" type="submit" style="padding: 10px 100px;">Search</button>
     </form>
 </div>
@@ -25,7 +23,7 @@
 <script>
     //code adapted from that found at https://www.w3schools.com/howto/howto_js_autocomplete.asp
     //function that runs autocomplete fill
-    function autocomplete(dataField, arr) {
+    function autocomplete(dataField, arr, cities) {
         var currentFocus;
         //when someone writes in text field
         dataField.addEventListener("input", function(e) {
@@ -41,12 +39,17 @@
             this.parentNode.appendChild(containerDiv);
             for (i = 0; i < arr.length; i++) {
                 //check if the item starts with the same letters as the text field value:
-                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase()) {
+                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase() || (val.length > 2 && cities[i].toUpperCase().includes(val.toUpperCase()))) {
                 //create a element for specific flight
                 flightDiv = document.createElement("DIV");
-                flightDiv.innerHTML = arr[i].substr(0,7);
-                flightDiv.innerHTML += "<strong>" + arr[i].substr(7, val.length) + "</strong>";
-                flightDiv.innerHTML += arr[i].substr(7 + val.length);
+                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase()) {
+                    flightDiv.innerHTML = arr[i].substr(0,7);
+                    flightDiv.innerHTML += "<strong>" + arr[i].substr(7, val.length) + "</strong>";
+                    flightDiv.innerHTML += arr[i].substr(7 + val.length);
+                }
+                else {
+                    flightDiv.innerHTML = arr[i];
+                }
                 flightDiv.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
                 //when someone clicks on specific flight
                 flightDiv.addEventListener("click", function(e) {
@@ -111,6 +114,7 @@
     }
     //gets all data from csv file
     const arr = [];
+    const cities = [];
     const filePath = "{{static_url}}"; 
     fetch(filePath)
         .then(response => response.text())
@@ -121,12 +125,14 @@
                 //filters out non airports and closed airports, adds ICAO code to front of airport
                 if (columns.length >= 12 && columns[1].includes('airport') && !columns[1].includes('closed')) {
                     const flight = columns[0] + " - " + columns[2];
+                    const city = columns[7];
                     arr.push(flight);
+                    cities.push(city);
                 }
             }
         }).catch(error => console.error('Error fetching data:', error));
-    autocomplete(document.getElementById("departureInput"), arr);
-    autocomplete(document.getElementById("arrivalInput"), arr);
+    autocomplete(document.getElementById("departureInput"), arr, cities);
+    autocomplete(document.getElementById("arrivalInput"), arr, cities);
 
 </script>
 {% endblock %}

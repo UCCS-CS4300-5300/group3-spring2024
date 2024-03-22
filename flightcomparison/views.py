@@ -33,6 +33,7 @@ def home(request):
   data = json.loads((binary).decode())
   return render(request, 'flightcomparison/home.html', {'flights': data['data']})
 
+# flight search blank, before entering anything into search
 def flight_search(request):
     static_url = static('data/airport-codes.csv')
     response = serializers.FlightListView.get(request)
@@ -40,8 +41,9 @@ def flight_search(request):
     data = json.loads((binary).decode())
     return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data'], 'static_url': static_url})
 
+# flight search data, once the user enters data into search form
 def flight_search_data(request):
-    #for comparison
+    #for comparison, when asking to compare specific flights, redirects to comparison page
     if request.method == 'POST':
         flight1 = request.POST.get('flight1', '')
         flight2 = request.POST.get('flight2', '')
@@ -49,23 +51,26 @@ def flight_search_data(request):
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
         return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
-    
+    #loads all data based on user input from search (normal search data)
     static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
+    arrival_location = request.GET.get('arrival_location', '')
     departure_time = request.GET.get('departure_time', '')
     price = request.GET.get('price', '')
 
     flights = Flight.objects.all()
     if departure_location:
         flights = flights.filter(departure_location__icontains=departure_location[7:])
+    if arrival_location:
+        flights = flights.filter(arrival_location__icontains=arrival_location[7:])
     if departure_time:
         flights = flights.filter(departure_time=departure_time)
     if price:
         flights = flights.filter(price=price)
-
+    
     return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights, 'static_url': static_url})
 
-
+# runs comparison for specific flights
 def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
