@@ -4,6 +4,9 @@ flightcomparison/__pycache__/
 flightcomparison/migrations/__pycache__/
 *.py[cod]
 *$py.class
+poetry.lock
+pyproject.toml
+
 
 # C extensions
 *.so
