@@ -38,7 +38,7 @@ class HomeViewTests(TestCase):
         # Tests that the home view uses the correct template.
         url = reverse('home')
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'home.html')
+        self.assertTemplateUsed(response, 'flightcomparison/home.html')
 
     '''
     Flight_Search view
@@ -53,7 +53,7 @@ class HomeViewTests(TestCase):
         #tests that the blank template was used
         url = reverse('flight_search')
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'flight_search_blank.html')
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_blank.html')
 
     def test_flight_search_post_status_code(self):
         #tests that the post code works
@@ -96,7 +96,7 @@ class HomeViewTests(TestCase):
         #tests to make sure the flight_compare template is being used
         url = reverse('compare', kwargs={'flight_1_id': 1, 'flight_2_id': 1, 'sort': 'price'})
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'flight_compare.html')
+        self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
     
 
 class FlightSearchViewTests(TestCase):
