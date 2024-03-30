@@ -1,6 +1,6 @@
 {% extends "flightcomparison/application.html" %}
 {% block content %}
-<div class="container">
+<div>
     <h2 style="text-align: center;">Flight Search</h2>
     <form method="GET" action="{% url 'flight_search_data' %}" style="text-align: center;">
         <p>
@@ -16,7 +16,7 @@
 </div>
 
 <!-- Display search results here -->
-<div class="container">
+<div>
     {% block flightSearch %}
     {% endblock %}
 </div>

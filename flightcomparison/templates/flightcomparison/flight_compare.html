@@ -1,7 +1,26 @@
 {% extends 'flightcomparison/flight_search.html' %}
 
+
+
 {% block flightSearch %}
 <h2>Comparing Flights</h2>
+
+<!-- View Options -->
+<div class="view_options">
+    <div class="left {% if '/list' in request.path %} active {% endif %}">
+        <a>
+            List
+        </a>
+    </div>
+    <div class="right {% if '/map' in request.path %} active {% endif %}">
+        <a>
+            Map
+        </a>
+    </div>
+</div>
+
+<!-- List View -->
+{% if '/list' in request.path %}
 <table>
     <tr>
         <th>Flight</th>
@@ -110,5 +129,10 @@
         <th>United</th>
     </tr>
 </table>
-<!--Insert map comparing locations here-->
+{% endif %}
+
+<!--Map View-->
+{% if '/map' in request.path %}
+{% endif %}
+
 {% endblock %}

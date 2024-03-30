@@ -70,3 +70,9 @@ def compare(request, flight_1_id, flight_2_id, sort):
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
 
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
+
+def get_flight_compare_view_selector(response):
+    return render(response, 'flightcomparison/flight_compare_view_selector.html', {})
+
+def get_flight_compare_map_view():
+    return HttpResponse()
