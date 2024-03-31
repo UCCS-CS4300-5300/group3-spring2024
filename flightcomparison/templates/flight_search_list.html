@@ -1,0 +1,30 @@
+{% extends "application.html" %}
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center;">Flight Search Results</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Departure Location</th>
+                        <th>Arrival Location</th>
+                        <th>Departure Time</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in flights %}
+                    <tr>
+                        <td>{{ flight.departure_location }}</td>
+                        <td>{{ flight.arrival_location }}</td>
+                        <td>{{ flight.departure_time }}</td>
+                        <td>${{ flight.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

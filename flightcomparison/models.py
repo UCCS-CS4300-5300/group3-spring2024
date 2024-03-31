@@ -19,3 +19,17 @@ class Flight(models.Model):
 
     def get_absolute_url(self):
         return reverse('flight_detail', args=[str(self.id)])
+    
+class FlightData(models.Model):
+    icao = models.CharField(max_length=4)
+    first_seen = models.IntegerField()
+    departure_airport = models.CharField(max_length=4)
+    last_seen = models.IntegerField()
+    arrival_airport = models.CharField(max_length=4)
+    callsign = models.CharField(max_length=8)
+    departure_airport_horizontal_distance = models.IntegerField()
+    departure_airport_vertical_distance = models.IntegerField()
+    arrival_airport_horizontal_distance = models.IntegerField()
+    arrival_airport_vertical_distance = models.IntegerField()
+    departure_airport_candidates_count = models.IntegerField()
+    arrival_airport_candidates_count = models.IntegerField()

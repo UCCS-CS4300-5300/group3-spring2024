@@ -1,0 +1,14 @@
+asgiref==3.7.2
+beautifulsoup4==4.12.3
+certifi==2024.2.2
+charset-normalizer==3.3.2
+Django==4.2.11
+django-bootstrap-v5==1.0.11
+idna==3.6
+-e git+https://github.com/UCCS-CS4300-5300/group3-spring2024.git@1f4ad18f3a3ccd24d2d3fee98d032257f0be8b4a#egg=opensky_api&subdirectory=opensky-api-master/opensky-api-master/python
+requests==2.31.0
+soupsieve==2.5
+sqlparse==0.4.4
+typing_extensions==4.10.0
+tzdata==2024.1
+urllib3==2.2.1

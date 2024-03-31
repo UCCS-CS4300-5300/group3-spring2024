@@ -6,6 +6,11 @@ from django.views import generic
 import json
 from . import serializers
 from .models import *
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from opensky_api import OpenSkyApi
+
+
 
 '''
 General Views
@@ -25,6 +30,7 @@ class FlightDetail(generic.DetailView):
         context['flight_list'] = flight_list
 
         return context
+    
 #home view
 def home(request):
   response = serializers.FlightListView.get(request)
@@ -70,3 +76,54 @@ def compare(request, flight_1_id, flight_2_id, sort):
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
 
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
+
+# reference https://openskynetwork.github.io/opensky-api/python.html#
+
+@csrf_exempt
+def get_arrivals_by_airport(request, airport, begin, end):
+    api = OpenSkyApi()
+    arrivals = api.get_arrivals_by_airport(airport, begin, end)
+    arrivals_json = [arr.__dict__ for arr in arrivals]
+    return JsonResponse(arrivals_json, safe=False)
+
+@csrf_exempt
+def get_departures_by_airport(request, airport, begin, end):
+    api = OpenSkyApi()
+    departures = api.get_departures_by_airport(airport, begin, end)
+    departures_json = [dep.__dict__ for dep in departures]
+    return JsonResponse(departures_json, safe=False)
+
+@csrf_exempt
+def get_flights_by_aircraft(request, icao24, begin, end):
+    api = OpenSkyApi()
+    flights = api.get_flights_by_aircraft(icao24, begin, end)
+    flights_json = [flight.__dict__ for flight in flights]
+    return JsonResponse(flights_json, safe=False)
+
+@csrf_exempt
+def get_flights_from_interval(request, begin, end):
+    api = OpenSkyApi()
+    flights = api.get_flights_from_interval(begin, end)
+    flights_json = [flight.__dict__ for flight in flights]
+    return JsonResponse(flights_json, safe=False)
+
+@csrf_exempt
+def get_my_states(request, time_secs=0, icao24=None, serials=None):
+    api = OpenSkyApi()
+    my_states = api.get_my_states(time_secs, icao24, serials)
+    my_states_json = my_states.__dict__
+    return JsonResponse(my_states_json, safe=False)
+
+@csrf_exempt
+def get_states(request, time_secs=0, icao24=None, bbox=()):
+    api = OpenSkyApi()
+    states = api.get_states(time_secs, icao24, bbox)
+    states_json = states.__dict__
+    return JsonResponse(states_json, safe=False)
+
+@csrf_exempt
+def get_track_by_aircraft(request, icao24, t=0):
+    api = OpenSkyApi()
+    track = api.get_track_by_aircraft(icao24, t)
+    track_json = track.__dict__
+    return JsonResponse(track_json, safe=False)
