@@ -1,26 +1,25 @@
 {% extends 'flightcomparison/flight_search.html' %}
 
-
-
 {% block flightSearch %}
+
 <h2>Comparing Flights</h2>
 
 <!-- View Options -->
 <div class="view_options">
-    <div class="left {% if '/list' in request.path %} active {% endif %}">
-        <a>
+    <div class="left {% if '/list' in request.path %} active {% endif %}" onclick="location.href='{% url 'compare/list' flight1.id flight2.id sort %}'">
+        <a style="text-decoration: none;" class="left {% if '/list' in request.path %} active {% endif %}">
             List
         </a>
     </div>
-    <div class="right {% if '/map' in request.path %} active {% endif %}">
-        <a>
+    <div class="right {% if '/map' in request.path %} active {% endif %}" onclick="location.href='{% url 'compare/map' flight1.id flight2.id sort %}'">
+        <a style="text-decoration: none;" class="right {% if '/map' in request.path %} active {% endif %}">
             Map
         </a>
     </div>
 </div>
 
 <!-- List View -->
-{% if '/list' in request.path %}
+{% if '/compare/list' in request.path %}
 <table>
     <tr>
         <th>Flight</th>
@@ -132,7 +131,8 @@
 {% endif %}
 
 <!--Map View-->
-{% if '/map' in request.path %}
+{% if '/compare/map' in request.path %}
+<h1>hello</h1>
 {% endif %}
 
 {% endblock %}
