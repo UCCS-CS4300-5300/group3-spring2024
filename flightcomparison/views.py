@@ -10,6 +10,8 @@ from django.templatetags.static import static
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from opensky_api import OpenSkyApi
+import requests
+
 
 '''
 General Views
@@ -82,53 +84,121 @@ def compare(request, flight_1_id, flight_2_id, sort):
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
 
 
-# reference https://openskynetwork.github.io/opensky-api/python.html#
+def api_calls(request):
+    if request.method == 'GET':
+        try:
+            return render(request, 'flightcomparison/api_calls.html')
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_arrivals_by_airport(request, airport, begin, end):
-    api = OpenSkyApi()
-    arrivals = api.get_arrivals_by_airport(airport, begin, end)
-    arrivals_json = [arr.__dict__ for arr in arrivals]
-    return JsonResponse(arrivals_json, safe=False)
+def get_flights_by_aircraft(request):
+    if request.method == 'GET':
+        try:
+            icao24 = request.GET.get('icao24')
+            begin = int(request.GET.get('begin'))
+            end = int(request.GET.get('end'))
+            url = f"https://opensky-network.org/api/flights/aircraft?icao24={icao24}&begin={begin}&end={end}"
+            response = requests.get(url)
+            data = response.json()
+            flights = data.get('flights', [])
+            return JsonResponse({'flights': flights})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_departures_by_airport(request, airport, begin, end):
-    api = OpenSkyApi()
-    departures = api.get_departures_by_airport(airport, begin, end)
-    departures_json = [dep.__dict__ for dep in departures]
-    return JsonResponse(departures_json, safe=False)
+def get_arrivals_by_airport(request):
+    if request.method == 'GET':
+        try:
+            airport = request.GET.get('airport')
+            begin = int(request.GET.get('begin'))
+            end = int(request.GET.get('end'))
+            url = f"https://opensky-network.org/api/flights/arrival?airport={airport}&begin={begin}&end={end}"
+            response = requests.get(url)
+            data = response.json()
+            arrivals = data.get('arrivals', [])
+            return JsonResponse({'arrivals': arrivals})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_flights_by_aircraft(request, icao24, begin, end):
-    api = OpenSkyApi()
-    flights = api.get_flights_by_aircraft(icao24, begin, end)
-    flights_json = [flight.__dict__ for flight in flights]
-    return JsonResponse(flights_json, safe=False)
+def get_departures_by_airport(request):
+    if request.method == 'GET':
+        try:
+            airport = request.GET.get('airport')
+            begin = int(request.GET.get('begin'))
+            end = int(request.GET.get('end'))
+            url = f"https://opensky-network.org/api/flights/departure?airport={airport}&begin={begin}&end={end}"
+            response = requests.get(url)
+            data = response.json()
+            departures = data.get('departures', [])
+            return JsonResponse({'departures': departures})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_flights_from_interval(request, begin, end):
-    api = OpenSkyApi()
-    flights = api.get_flights_from_interval(begin, end)
-    flights_json = [flight.__dict__ for flight in flights]
-    return JsonResponse(flights_json, safe=False)
+def get_flights_from_interval(request):
+    if request.method == 'GET':
+        try:
+            begin = int(request.GET.get('begin'))
+            end = int(request.GET.get('end'))
+            url = f"https://opensky-network.org/api/flights/all?begin={begin}&end={end}"
+            response = requests.get(url)
+            data = response.json()
+            flights = data.get('flights', [])
+            return JsonResponse({'flights': flights})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_my_states(request, time_secs=0, icao24=None, serials=None):
-    api = OpenSkyApi()
-    my_states = api.get_my_states(time_secs, icao24, serials)
-    my_states_json = my_states.__dict__
-    return JsonResponse(my_states_json, safe=False)
+def get_my_states(request):
+    if request.method == 'GET':
+        try:
+            time_secs = int(request.GET.get('time_secs', 0))
+            icao24 = request.GET.get('icao24')
+            serials = request.GET.get('serials')
+            url = f"https://opensky-network.org/api/states/own?time={time_secs}&icao24={icao24}&serials={serials}"
+            response = requests.get(url)
+            data = response.json()
+            states = data.get('states', [])
+            return JsonResponse({'states': states})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_states(request, time_secs=0, icao24=None, bbox=()):
-    api = OpenSkyApi()
-    states = api.get_states(time_secs, icao24, bbox)
-    states_json = states.__dict__
-    return JsonResponse(states_json, safe=False)
+def get_states(request):
+    if request.method == 'GET':
+        try:
+            time_secs = int(request.GET.get('time_secs', 0))
+            icao24 = request.GET.get('icao24')
+            bbox = request.GET.get('bbox')
+            url = f"https://opensky-network.org/api/states/all?time={time_secs}&icao24={icao24}&bbox={bbox}"
+            response = requests.get(url)
+            data = response.json()
+            states = data.get('states', [])
+            return JsonResponse({'states': states})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
-@csrf_exempt
-def get_track_by_aircraft(request, icao24, t=0):
-    api = OpenSkyApi()
-    track = api.get_track_by_aircraft(icao24, t)
-    track_json = track.__dict__
-    return JsonResponse(track_json, safe=False)
+def get_track_by_aircraft(request):
+    if request.method == 'GET':
+        try:
+            icao24 = request.GET.get('icao24')
+            t = int(request.GET.get('t', 0))
+            url = f"https://opensky-network.org/api/tracks?icao24={icao24}&time={t}"
+            response = requests.get(url)
+            data = response.json()
+            track = data.get('track', [])
+            return JsonResponse({'track': track})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
