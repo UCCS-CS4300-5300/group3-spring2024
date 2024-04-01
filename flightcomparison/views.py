@@ -9,6 +9,12 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 from . import serializers
 from .models import *
+from django.templatetags.static import static
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from opensky_api import OpenSkyApi
+import requests
+
 
 '''
 General Views
@@ -28,6 +34,7 @@ class FlightDetail(generic.DetailView):
         context['flight_list'] = flight_list
 
         return context
+    
 #home view
 def home(request):
   response = serializers.FlightListView.get(request)
@@ -35,14 +42,17 @@ def home(request):
   data = json.loads((binary).decode())
   return render(request, 'flightcomparison/home.html', {'flights': data['data']})
 
+# flight search blank, before entering anything into search
 def flight_search(request):
+    static_url = static('data/airport-codes.csv')
     response = serializers.FlightListView.get(request)
     binary = response.content
     data = json.loads((binary).decode())
-    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data']})
+    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data'], 'static_url': static_url})
 
+# flight search data, once the user enters data into search form
 def flight_search_data(request):
-    #for comparison
+    #for comparison, when asking to compare specific flights, redirects to comparison page
     if request.method == 'POST':
         flight1 = request.POST.get('flight1', '')
         flight2 = request.POST.get('flight2', '')
@@ -50,24 +60,26 @@ def flight_search_data(request):
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
         return redirect('compare/list', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
-    
+    #loads all data based on user input from search (normal search data)
+    static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
+    arrival_location = request.GET.get('arrival_location', '')
     departure_time = request.GET.get('departure_time', '')
     price = request.GET.get('price', '')
 
     flights = Flight.objects.all()
     if departure_location:
-        flights = flights.filter(departure_location__icontains=departure_location)
+        flights = flights.filter(departure_location__icontains=departure_location[7:])
+    if arrival_location:
+        flights = flights.filter(arrival_location__icontains=arrival_location[7:])
     if departure_time:
         flights = flights.filter(departure_time=departure_time)
     if price:
         flights = flights.filter(price=price)
+    
+    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights, 'static_url': static_url})
 
-    for flight in flights:
-        print(flight.id)
-    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights})
-
-
+# runs comparison for specific flights
 def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
@@ -78,3 +90,11 @@ def compare(request, flight_1_id, flight_2_id, sort):
     print(flight2_dict, "flight2")
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
 
+def api_calls(request):
+    if request.method == 'GET':
+        try:
+            return render(request, 'flightcomparison/api_calls.html')
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
