@@ -1,6 +1,6 @@
 {% extends "flightcomparison/application.html" %}
 {% block content %}
-<div class="container">
+<div>
     <h2 style="text-align: center;">Flight Search</h2>
     <form autocomplete="off" method="GET" action="{% url 'flight_search_data' %}" style="text-align: center;">
         <div class="autocomplete">
@@ -11,12 +11,12 @@
             <div id="departureOptions" class="suggestions"></div>
             <div id="arrivalOptions" class="suggestions"></div>   
         </div>
-        <button class="btn btn-primary" type="submit" style="padding: 10px 100px;">Search</button>
+        <button class="btn btn-primary" type="submit" style="margin-top:10px; padding: 10px 100px;">Search</button>
     </form>
 </div>
 
 <!-- Display search results here -->
-<div class="container">
+<div>
     {% block flightSearch %}
     {% endblock %}
 </div>

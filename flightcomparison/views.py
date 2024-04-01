@@ -3,6 +3,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.views import generic
+from django.conf import settings
+from django.forms.models import model_to_dict
+from django.core.serializers.json import DjangoJSONEncoder
 import json
 from . import serializers
 from .models import *
@@ -56,7 +59,7 @@ def flight_search_data(request):
         sort = request.POST.get('sortoption', '')
         flight1 = get_object_or_404(Flight, pk=flight1)
         flight2 = get_object_or_404(Flight, pk=flight2)
-        return redirect('compare', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
+        return redirect('compare/list', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
     #loads all data based on user input from search (normal search data)
     static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
@@ -80,9 +83,12 @@ def flight_search_data(request):
 def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
-
-    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
-
+    # dictionaries for map view
+    flight1_dict = json.dumps(model_to_dict(flight1), cls=DjangoJSONEncoder)
+    flight2_dict = json.dumps(model_to_dict(flight2), cls=DjangoJSONEncoder)
+    print(flight1_dict, "flight1")
+    print(flight2_dict, "flight2")
+    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
 
 def api_calls(request):
     if request.method == 'GET':
