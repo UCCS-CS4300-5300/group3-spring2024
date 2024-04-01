@@ -7,6 +7,11 @@ import json
 from . import serializers
 from .models import *
 from django.templatetags.static import static
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from opensky_api import OpenSkyApi
+import requests
+
 
 '''
 General Views
@@ -26,6 +31,7 @@ class FlightDetail(generic.DetailView):
         context['flight_list'] = flight_list
 
         return context
+    
 #home view
 def home(request):
   response = serializers.FlightListView.get(request)
@@ -76,3 +82,13 @@ def compare(request, flight_1_id, flight_2_id, sort):
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
 
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
+
+
+def api_calls(request):
+    if request.method == 'GET':
+        try:
+            return render(request, 'flightcomparison/api_calls.html')
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
