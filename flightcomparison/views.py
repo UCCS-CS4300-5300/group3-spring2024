@@ -3,6 +3,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.views import generic
+from django.conf import settings
+from django.forms.models import model_to_dict
+from django.core.serializers.json import DjangoJSONEncoder
 import json
 from . import serializers
 from .models import *
@@ -68,6 +71,10 @@ def flight_search_data(request):
 def compare(request, flight_1_id, flight_2_id, sort):
     flight1 = get_object_or_404(Flight, pk=flight_1_id)
     flight2 = get_object_or_404(Flight, pk=flight_2_id)
-
-    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort})
+    # dictionaries for map view
+    flight1_dict = json.dumps(model_to_dict(flight1), cls=DjangoJSONEncoder)
+    flight2_dict = json.dumps(model_to_dict(flight2), cls=DjangoJSONEncoder)
+    print(flight1_dict, "flight1")
+    print(flight2_dict, "flight2")
+    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
 

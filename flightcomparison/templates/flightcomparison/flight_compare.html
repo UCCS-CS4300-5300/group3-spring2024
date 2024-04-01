@@ -7,12 +7,12 @@
 <!-- View Options -->
 <div class="view_options">
     <div class="left {% if '/list' in request.path %} active {% endif %}" onclick="location.href='{% url 'compare/list' flight1.id flight2.id sort %}'">
-        <a style="text-decoration: none;" class="left {% if '/list' in request.path %} active {% endif %}">
+        <a style="text-decoration: none;" class="left {% if '/compare/list' in request.path %} active {% endif %}">
             List
         </a>
     </div>
     <div class="right {% if '/map' in request.path %} active {% endif %}" onclick="location.href='{% url 'compare/map' flight1.id flight2.id sort %}'">
-        <a style="text-decoration: none;" class="right {% if '/map' in request.path %} active {% endif %}">
+        <a style="text-decoration: none;" class="right {% if '/compare/map' in request.path %} active {% endif %}">
             Map
         </a>
     </div>
@@ -132,7 +132,13 @@
 
 <!--Map View-->
 {% if '/compare/map' in request.path %}
-<h1>hello</h1>
+
+<div id="map" style="height: 600px;" data-flight1="{{flight1_dict}}" data-flight2="{{flight2_dict}}"></div>
+
+{% load static %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCbrBnMlfMqs2QcYeHRRhDXoFUc64R3bXk"></script>
+<script src="{% static 'flightcomparison/maps.js' %}"></script>
+
 {% endif %}
 
 {% endblock %}
