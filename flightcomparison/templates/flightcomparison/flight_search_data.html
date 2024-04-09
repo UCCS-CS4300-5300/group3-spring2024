@@ -1,6 +1,8 @@
 {% extends 'flightcomparison/flight_search.html' %}
 
 {% block flightSearch %}
+<h3 style="text-align: center;">Comparing flights {% if query_data %} {% if query_data.0 != "" %} from {{query_data.0}} {% endif %}{% if query_data.1 != "" %} to {{query_data.1}} {% endif %}{% if query_data.2 != "" %} at {{query_data.2}} {% endif %}
+     {% if query_data.3 != ""%} at price {{query_data.3}} {% endif%}{% if query_data.4 != "" %} sorted by {{query_data.4}} {% endif %} {% endif %}</h3>
 {% if flights %}
 <!--Comparison accordion-->
 <div class="accordion">
