@@ -89,12 +89,12 @@ def flight_search_data(request):
     elif sort == 'earlydepart':
         flights = sorted(flights, key=lambda x: x.departure_time)
     elif sort == 'latestdepart':
-        flights = sorted(flights, key=lambda x: x.departure_time)
+        flights = sorted(flights, key=lambda x: x.departure_time, reverse=True)
     elif sort == 'earlyarrival':
         flights = sorted(flights, key=lambda x: x.arrival_time)
     else:
-        flights = sorted(flights, key=lambda x: x.arrival_time)
-    print(data)
+        flights = sorted(flights, key=lambda x: x.arrival_time, reverse=True)
+
     return render(request, 'flightcomparison/flight_search_data.html', {'query_data': data, 'flights': flights, 'static_url': static_url})
 
 # runs comparison for specific flights

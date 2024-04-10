@@ -9,10 +9,10 @@
     <h2 style="text-align: center;">Search for Flight</h2>
     <form autocomplete="off" method="GET" action="{% url 'flight_search_data' %}" style="text-align: center;">
         <div class="autocomplete">
-            Departure: <input type="text" id="departureInput" name="departure_location" placeholder="Departure Location"> 
-            Arrival: <input type="text" id="arrivalInput" name="arrival_location" placeholder="Arrival Location">
-            Departure Time: <input type="datetime-local" name="departure_time" placeholder="Departure Time">
-            Price: <input type="number" name="price" placeholder="Price">
+            Departure: <input type="text" id="departureInput" name="departure_location" placeholder="Departure Location" value="{% if query_data %}{% if query_data.0 != '' %}{{query_data.0}}{% endif %}{% endif %}"> 
+            Arrival: <input type="text" id="arrivalInput" name="arrival_location" placeholder="Arrival Location"value="{% if query_data %}{% if query_data.1 != '' %}{{query_data.1}}{% endif %}{% endif %}">
+            Departure Time: <input type="datetime-local" name="departure_time" placeholder="Departure Time" value="{% if query_data %}{% if query_data.2 != '' %}{{query_data.2}}{% endif %}{% endif %}">
+            Price: <input type="number" name="price" placeholder="Price" value="{% if query_data %}{% if query_data.3 != '' %}{{query_data.3}}{% endif %}{% endif %}">
             <p></p><p><label for="sortoption">Sort By:</label>
                     <select name="sortoption" id="sort">
                         <option value="price">Price</option>
@@ -36,7 +36,7 @@
 <script>
     //code adapted from that found at https://www.w3schools.com/howto/howto_js_autocomplete.asp
     //function that runs autocomplete fill
-    function autocomplete(dataField, arr, cities) {
+    function autocomplete(dataField, arr, cities, icaos) {
         var currentFocus;
         //when someone writes in text field
         dataField.addEventListener("input", function(e) {
@@ -52,13 +52,17 @@
             this.parentNode.appendChild(containerDiv);
             for (i = 0; i < arr.length; i++) {
                 //check if the item starts with the same letters as the text field value:
-                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase() || (val.length > 2 && cities[i].toUpperCase().includes(val.toUpperCase()))) {
+                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase() || (val.length > 2 && cities[i].toUpperCase().includes(val.toUpperCase())) || icaos[i].toUpperCase().includes(val.toUpperCase())) {
                 //create a element for specific flight
                 flightDiv = document.createElement("DIV");
+                //highlights matching section of airport name
                 if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase()) {
                     flightDiv.innerHTML = arr[i].substr(0,7);
                     flightDiv.innerHTML += "<strong>" + arr[i].substr(7, val.length) + "</strong>";
                     flightDiv.innerHTML += arr[i].substr(7 + val.length);
+                }
+                else if (icaos[i].toUpperCase().includes(val.toUpperCase())) {
+                    flightDiv.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length);
                 }
                 else {
                     flightDiv.innerHTML = arr[i];
@@ -128,6 +132,7 @@
     //gets all data from csv file
     const arr = [];
     const cities = [];
+    const icaos = [];
     const filePath = "{{static_url}}"; 
     fetch(filePath)
         .then(response => response.text())
@@ -139,13 +144,15 @@
                 if (columns.length >= 12 && columns[1].includes('airport') && !columns[1].includes('closed')) {
                     const flight = columns[0] + " - " + columns[2];
                     const city = columns[7];
+                    const icao = columns[0];
                     arr.push(flight);
                     cities.push(city);
+                    icaos.push(icao);
                 }
             }
         }).catch(error => console.error('Error fetching data:', error));
-    autocomplete(document.getElementById("departureInput"), arr, cities);
-    autocomplete(document.getElementById("arrivalInput"), arr, cities);
+    autocomplete(document.getElementById("departureInput"), arr, cities, icaos);
+    autocomplete(document.getElementById("arrivalInput"), arr, cities, icaos);
 
 </script>
 {% endblock %}
