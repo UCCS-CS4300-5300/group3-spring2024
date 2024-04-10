@@ -53,27 +53,27 @@
             for (i = 0; i < arr.length; i++) {
                 //check if the item starts with the same letters as the text field value:
                 if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase() || (val.length > 2 && cities[i].toUpperCase().includes(val.toUpperCase())) || icaos[i].toUpperCase().includes(val.toUpperCase())) {
-                //create a element for specific flight
-                flightDiv = document.createElement("DIV");
-                //highlights matching section of airport name
-                if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase()) {
-                    flightDiv.innerHTML = arr[i].substr(0,7);
-                    flightDiv.innerHTML += "<strong>" + arr[i].substr(7, val.length) + "</strong>";
-                    flightDiv.innerHTML += arr[i].substr(7 + val.length);
-                }
-                else if (icaos[i].toUpperCase().includes(val.toUpperCase())) {
-                    flightDiv.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length);
-                }
-                else {
-                    flightDiv.innerHTML = arr[i];
-                }
-                flightDiv.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                //when someone clicks on specific flight
-                flightDiv.addEventListener("click", function(e) {
-                    dataField.value = this.getElementsByTagName("input")[0].value;
-                    closeAllLists();
-                });
-                containerDiv.appendChild(flightDiv);
+                    //create a element for specific flight
+                    flightDiv = document.createElement("DIV");
+                    //highlights matching section of airport name
+                    if (arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase()) {
+                        flightDiv.innerHTML = arr[i].substr(0,7);
+                        flightDiv.innerHTML += "<strong>" + arr[i].substr(7, val.length) + "</strong>";
+                        flightDiv.innerHTML += arr[i].substr(7 + val.length);
+                    }
+                    else if (icaos[i].toUpperCase().includes(val.toUpperCase())) {
+                        flightDiv.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length);
+                    }
+                    else {
+                        flightDiv.innerHTML = arr[i];
+                    }
+                    flightDiv.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    //when someone clicks on specific flight
+                    flightDiv.addEventListener("click", function(e) {
+                        dataField.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    containerDiv.appendChild(flightDiv);
                 }
             }
         });
