@@ -104,8 +104,6 @@ def compare(request, flight_1_id, flight_2_id, sort):
     # dictionaries for map view
     flight1_dict = json.dumps(model_to_dict(flight1), cls=DjangoJSONEncoder)
     flight2_dict = json.dumps(model_to_dict(flight2), cls=DjangoJSONEncoder)
-    print(flight1_dict, "flight1")
-    print(flight2_dict, "flight2")
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
 
 def api_calls(request):
