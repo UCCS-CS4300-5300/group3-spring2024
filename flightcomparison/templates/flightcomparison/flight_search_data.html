@@ -1,6 +1,10 @@
 {% extends 'flightcomparison/flight_search.html' %}
 
 {% block flightSearch %}
+<h3 style="text-align: center;">Comparing flights {% if query_data %} {% if query_data.0 != "" %} from {{query_data.0}} {% endif %}{% if query_data.1 != "" %} to {{query_data.1}} {% endif %}{% if query_data.2 != "" %} at {{query_data.2}} {% endif %}
+     {% if query_data.3 != ""%} at price {{query_data.3}} {% endif%}{% if query_data.4 != "" %} sorted by 
+     {% if query_data.4 == 'price' %}price: {% elif query_data.4 == 'earlydepart' %}earliest departure: {% elif query_data.4 == 'latestdepart' %}latest departure: {% elif query_data.4 == 'earlyarrival' %}earliest arrival:
+     {% else %}latest arrival: {% endif %} {% endif %} {% endif %}</h3>
 {% if flights %}
 <!--Comparison accordion-->
 <div class="accordion">
@@ -53,7 +57,8 @@
             {% for flight in flights %}
             <div class="accordion-item border-0">
                 <h5 class="acordion-header">
-                    {{flight.departure_location}} to {{flight.arrival_location}}, Departure Time: {{flight.departure_time}}, Price: ${{flight.price}}
+                    {{flight.departure_location}} to {{flight.arrival_location}}: {% if query_data.4 != "" %} {% if query_data.4 == 'price' %}<b>Price: ${{flight.price}}</b> {% elif query_data.4 == 'earlydepart' %}<b>Departure Time: {{flight.departure_time}}</b>
+                    {% elif query_data.4 == 'latestdepart' %}<b>Departure Time: {{flight.departure_time}}</b> {% else %}<b>Arrival Time: {{flight.arrival_time}}</b> {% endif %}{% endif %}
                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse_{{ forloop.counter }}">View More</button>
                 </h5>
                 <div id="collapse_{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="headingOne">
@@ -72,7 +77,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No flights found for search query.</p>
+        <p></p><p></p><p style="text-align: center;">No flights found for search query. Please try again</p>
     {% endif %}
     
 {% endblock %}

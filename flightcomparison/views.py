@@ -35,20 +35,17 @@ class FlightDetail(generic.DetailView):
 
         return context
     
-#home view
-def home(request):
+#recomends flights based on those in the database
+def recommend(request):
   response = serializers.FlightListView.get(request)
   binary = response.content
   data = json.loads((binary).decode())
-  return render(request, 'flightcomparison/home.html', {'flights': data['data']})
+  return render(request, 'flightcomparison/recommend.html', {'flights': data['data']})
 
 # flight search blank, before entering anything into search
 def flight_search(request):
     static_url = static('data/airport-codes.csv')
-    response = serializers.FlightListView.get(request)
-    binary = response.content
-    data = json.loads((binary).decode())
-    return render(request, 'flightcomparison/flight_search_blank.html', {'flights': data['data'], 'static_url': static_url})
+    return render(request, 'flightcomparison/flight_search_blank.html', {'static_url': static_url})
 
 # flight search data, once the user enters data into search form
 def flight_search_data(request):
@@ -66,18 +63,39 @@ def flight_search_data(request):
     arrival_location = request.GET.get('arrival_location', '')
     departure_time = request.GET.get('departure_time', '')
     price = request.GET.get('price', '')
+    sort = request.GET.get('sortoption', '')
+
+    #for query response data
+    data = ["","","","",""]
 
     flights = Flight.objects.all()
     if departure_location:
         flights = flights.filter(departure_location__icontains=departure_location[7:])
+        data[0] = departure_location
     if arrival_location:
         flights = flights.filter(arrival_location__icontains=arrival_location[7:])
+        data[1] = arrival_location
     if departure_time:
         flights = flights.filter(departure_time=departure_time)
+        data[2] = departure_time
     if price:
         flights = flights.filter(price=price)
+        data[3] = price
     
-    return render(request, 'flightcomparison/flight_search_data.html', {'flights': flights, 'static_url': static_url})
+    #sorts based on selected
+    data[4] = sort
+    if sort == 'price':
+        flights = sorted(flights, key=lambda x: x.price)
+    elif sort == 'earlydepart':
+        flights = sorted(flights, key=lambda x: x.departure_time)
+    elif sort == 'latestdepart':
+        flights = sorted(flights, key=lambda x: x.departure_time, reverse=True)
+    elif sort == 'earlyarrival':
+        flights = sorted(flights, key=lambda x: x.arrival_time)
+    else:
+        flights = sorted(flights, key=lambda x: x.arrival_time, reverse=True)
+
+    return render(request, 'flightcomparison/flight_search_data.html', {'query_data': data, 'flights': flights, 'static_url': static_url})
 
 # runs comparison for specific flights
 def compare(request, flight_1_id, flight_2_id, sort):
@@ -86,8 +104,6 @@ def compare(request, flight_1_id, flight_2_id, sort):
     # dictionaries for map view
     flight1_dict = json.dumps(model_to_dict(flight1), cls=DjangoJSONEncoder)
     flight2_dict = json.dumps(model_to_dict(flight2), cls=DjangoJSONEncoder)
-    print(flight1_dict, "flight1")
-    print(flight2_dict, "flight2")
     return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
 
 def api_calls(request):
