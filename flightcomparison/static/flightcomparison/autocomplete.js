@@ -118,7 +118,7 @@ function autocomplete(dataField, arr, cities, icaos) {
 const arr = [];
 const cities = [];
 const icaos = [];
-const filePath = "static/data/airport-codes.csv"; 
+const filePath = "/static/data/airport-codes.csv"; 
 fetch(filePath)
     .then(response => response.text())
     .then(data => {
