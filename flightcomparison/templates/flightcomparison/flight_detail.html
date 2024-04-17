@@ -2,49 +2,51 @@
 {% block content %}
 
 
+<style>
+    .table td:first-child {
+        border-right: 1px solid #dddddd; /* Add a right border to the first td in each row */
+    }
+</style>
+
 <div class="container">
     <!-- Display Flight Data -->
-    <h2>Flight From: "{{ flight.departure_location }}" To: "{{ flight.arrival_location }}"</h2>
-
-</div>
-<!-- DATABASE DATA -->
-<div class="container">
-    <ul>
-    <p>
-        <b>Departure Time:</b>
-        <span class="right-aligned-container">{{ flight.departure_time }}</span>
-    </p>
-    <p>
-        <b>Arrival Time:</b> 
-        <span class="right-aligned-container">{{ flight.arrival_time }}</span>
-    </p>
-    <p>
-        <b>Price:</b> 
-        <span class="right-aligned-container">${{ flight.price }}</span>
-    </p>
-    <p>
-        <b>Seat Number:</b> 
-        <span class="right-aligned-container">{{ flight.seat_number }}</span>
-    </p>
-    
-    <p>
-        <b>Airline:</b> 
-        <span class="right-aligned-container">[Insert airline]</span>
-    </p>
-  
-    <p>
-        <b>Number of Stops:</b> 
-        <span class="right-aligned-container">[Insert # of Stops]</span>
-    </p>
-    <p>
-        <b>Checked Baggage:</b> 
-        <span class="right-aligned-container">[Insert # of Complimentary checked baggage]</span>
-    </p>
-    <p>
-        <b>Carry on Allowance:</b> 
-        <span class="right-aligned-container">[Insert# of carry on bags a passenger may take]</span>
-    </p>
-    </ul>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Flight From: "{{ flight.departure_location }}" To: "{{ flight.arrival_location }}"</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td><b>Departure Time:</b></td>
+                            <td><span>{{ flight.departure_time }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Arrival Time:</b></td>
+                            <td><span>{{ flight.arrival_time }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Price:</b></td>
+                            <td><span>${{ flight.price }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Seat Number:</b></td>
+                            <td><span>{{ flight.seat_number }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Airline:</b></td>
+                            <td><span>[Insert airline]</span></td>
+                        </tr>
+                        <tr>
+                            <td><b>Number of Stops:</b></td>
+                            <td><span>[Insert # of Stops]</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
     
 {% endblock %}

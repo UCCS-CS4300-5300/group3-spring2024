@@ -3,10 +3,12 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import Flight, FlightData
+
 import unittest
 import requests
 from unittest.mock import patch, MagicMock
 from base64 import b64encode
+
 
 class FlightModelTests(TestCase):
     def setUp(self):
@@ -326,3 +328,4 @@ class TestOpenSkyAPI(unittest.TestCase):
             params={'begin': 'begin', 'end': 'end'},
             headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
         )
+
