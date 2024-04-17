@@ -52,13 +52,8 @@ def flight_search(request):
 def flight_search_data(request):
     #for comparison, when asking to compare specific flights, redirects to comparison page
     if request.method == 'POST':
-        print(request.POST.getlist('flights[]'),"flights selected")
         selected_flight_ids = request.POST.getlist('flights[]')
-        # flight1 = request.POST.get('flight1', '')
-        # flight2 = request.POST.get('flight2', '')
         sort = request.POST.get('sortoption', '')
-        # flight1 = get_object_or_404(Flight, pk=flights[0])
-        # flight2 = get_object_or_404(Flight, pk=flight2)
         return redirect('compare/list', flight_ids=','.join(selected_flight_ids), sort=sort)
     #loads all data based on user input from search (normal search data)
     static_url = static('data/airport-codes.csv')
@@ -103,8 +98,6 @@ def flight_search_data(request):
 # runs comparison for specific flights
 def compare(request, flight_ids, sort):
     # list view
-    # flight1 = get_object_or_404(Flight, pk=flight_1_id)
-    # flight2 = get_object_or_404(Flight, pk=flight_2_id)
     flight_ids = flight_ids
     selected_flights = [int(x) for x in flight_ids.split(',')]
     selected_flights = Flight.objects.filter(id__in=selected_flights)    
