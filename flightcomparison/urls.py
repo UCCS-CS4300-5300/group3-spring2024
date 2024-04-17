@@ -6,8 +6,8 @@ from . import views
 
 appName = 'flightcomparison' 
 urlpatterns = [
-    path('', views.home, name='home'), 
-    path('flight_search/', views.flight_search, name='flight_search'), 
+    path('', views.flight_search, name='flight_search'), 
+    path('recommendations/', views.recommend, name='recommend'), 
     path('flight_search/query/', views.flight_search_data, name='flight_search_data'), 
     path('compare/list/<str:flight_ids>/<str:sort>', views.compare, name="compare/list"),
     path('compare/map/<str:flight_ids>/<str:sort>/', views.compare, name="compare/map"), 
