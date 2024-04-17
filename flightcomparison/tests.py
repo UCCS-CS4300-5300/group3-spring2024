@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from .models import Flight, FlightData
 
+import unittest
+import requests
+from unittest.mock import patch, MagicMock
+from base64 import b64encode
+
+
 class FlightModelTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='12345')
@@ -171,4 +177,155 @@ class FlightSearchTests(TestCase):
         response = self.client.get(reverse('flight_search_data'), {'departure_location': 'City A'})
         self.assertContains(response, "City A")
         self.assertNotContains(response, "No flights found.")
+
+def fetch_states():
+    try:
+        response = requests.get("https://opensky-network.org/api/states/all")
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print('Error:', e)
+        raise
+
+def get_own_states():
+    username = 'USERNAME'
+    password = 'PASSWORD'
+    credentials = b64encode(f"{username}:{password}".encode()).decode()
+    headers = {'Authorization': f'Basic {credentials}'}
+
+    try:
+        response = requests.get("https://opensky-network.org/api/states/own", headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print('Error:', e)
+        raise
+
+def get_departures_by_airport(airport, begin, end):
+    username = 'USERNAME'
+    password = 'PASSWORD'
+    credentials = b64encode(f"{username}:{password}".encode()).decode()
+    headers = {'Authorization': f'Basic {credentials}'}
+    params = {'airport': airport, 'begin': begin, 'end': end}
+
+    try:
+        response = requests.get("https://opensky-network.org/api/flights/departure", params=params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print('Error:', e)
+        raise
+
+def get_arrivals_by_airport(airport, begin, end):
+    username = 'USERNAME'
+    password = 'PASSWORD'
+    credentials = b64encode(f"{username}:{password}".encode()).decode()
+    headers = {'Authorization': f'Basic {credentials}'}
+    params = {'airport': airport, 'begin': begin, 'end': end}
+
+    try:
+        response = requests.get("https://opensky-network.org/api/flights/arrival", params=params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print('Error:', e)
+        raise
+
+def get_flights_in_time_interval(begin, end):
+    username = 'USERNAME'
+    password = 'PASSWORD'
+    credentials = b64encode(f"{username}:{password}".encode()).decode()
+    headers = {'Authorization': f'Basic {credentials}'}
+    params = {'begin': begin, 'end': end}
+
+    try:
+        response = requests.get("https://opensky-network.org/api/flights/all", params=params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        return data
+    except Exception as e:
+        print('Error:', e)
+        raise
+
+class TestOpenSkyAPI(unittest.TestCase):
+    @patch('requests.get')
+    def test_fetch_states(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {'some': 'data'}
+        mock_get.return_value = mock_response
+
+        result = fetch_states()
+
+        self.assertEqual(result, {'some': 'data'})
+        mock_get.assert_called_once_with(
+            "https://opensky-network.org/api/states/all"
+        )
+
+    @patch('requests.get')
+    def test_get_own_states(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {'some': 'data'}
+        mock_get.return_value = mock_response
+
+        result = get_own_states()
+
+        self.assertEqual(result, {'some': 'data'})
+        mock_get.assert_called_once_with(
+            "https://opensky-network.org/api/states/own",
+            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
+        )
+
+    @patch('requests.get')
+    def test_get_departures_by_airport(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {'some': 'data'}
+        mock_get.return_value = mock_response
+
+        result = get_departures_by_airport('airport', 'begin', 'end')
+
+        self.assertEqual(result, {'some': 'data'})
+        mock_get.assert_called_once_with(
+            "https://opensky-network.org/api/flights/departure",
+            params={'airport': 'airport', 'begin': 'begin', 'end': 'end'},
+            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
+        )
+
+    @patch('requests.get')
+    def test_get_arrivals_by_airport(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {'some': 'data'}
+        mock_get.return_value = mock_response
+
+        result = get_arrivals_by_airport('airport', 'begin', 'end')
+
+        self.assertEqual(result, {'some': 'data'})
+        mock_get.assert_called_once_with(
+            "https://opensky-network.org/api/flights/arrival",
+            params={'airport': 'airport', 'begin': 'begin', 'end': 'end'},
+            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
+        )
+
+    @patch('requests.get')
+    def test_get_flights_in_time_interval(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {'some': 'data'}
+        mock_get.return_value = mock_response
+
+        result = get_flights_in_time_interval('begin', 'end')
+
+        self.assertEqual(result, {'some': 'data'})
+        mock_get.assert_called_once_with(
+            "https://opensky-network.org/api/flights/all",
+            params={'begin': 'begin', 'end': 'end'},
+            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
+        )
 
