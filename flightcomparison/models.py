@@ -7,6 +7,7 @@ from opensky_api import OpenSkyApi
 '''
 Model that Represents an individual flight
 '''
+
 class Flight(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     departure_location = models.CharField(max_length=200)
@@ -28,6 +29,29 @@ class Flight(models.Model):
 
     def get_absolute_url(self):
         return reverse('flight_detail', args=[str(self.id)])
+
+    @staticmethod
+    def get_all_flights_data():
+        flights_data = {}
+        for flight in Flight.objects.all():
+            flights_data[flight.id] = {
+                'user': flight.user.username,
+                'departure_location': flight.departure_location,
+                'departure_location_latitude': str(flight.departure_location_latitude),
+                'departure_location_longitude': str(flight.departure_location_longitude),
+                'layover_location': flight.layover_location,
+                'layover_location_latitude': str(flight.layover_location_latitude),
+                'layover_location_longitude': str(flight.layover_location_longitude),
+                'arrival_location': flight.arrival_location,
+                'arrival_location_latitude': str(flight.arrival_location_latitude),
+                'arrival_location_longitude': str(flight.arrival_location_longitude),
+                'departure_time': str(flight.departure_time),
+                'arrival_time': str(flight.arrival_time),
+                'price': flight.price,
+                'seat_number': flight.seat_number,
+            }
+        return flights_data
+
     
 '''
 Model represents all data from the OpenSky Network API

@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db.models import indexes
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
@@ -51,12 +52,9 @@ def flight_search(request):
 def flight_search_data(request):
     #for comparison, when asking to compare specific flights, redirects to comparison page
     if request.method == 'POST':
-        flight1 = request.POST.get('flight1', '')
-        flight2 = request.POST.get('flight2', '')
+        selected_flight_ids = request.POST.getlist('flights[]')
         sort = request.POST.get('sortoption', '')
-        flight1 = get_object_or_404(Flight, pk=flight1)
-        flight2 = get_object_or_404(Flight, pk=flight2)
-        return redirect('compare/list', flight_1_id=flight1.id, flight_2_id=flight2.id, sort=sort)
+        return redirect('compare/list', flight_ids=','.join(selected_flight_ids), sort=sort)
     #loads all data based on user input from search (normal search data)
     static_url = static('data/airport-codes.csv')
     departure_location = request.GET.get('departure_location', '')
@@ -98,13 +96,24 @@ def flight_search_data(request):
     return render(request, 'flightcomparison/flight_search_data.html', {'query_data': data, 'flights': flights, 'static_url': static_url})
 
 # runs comparison for specific flights
-def compare(request, flight_1_id, flight_2_id, sort):
-    flight1 = get_object_or_404(Flight, pk=flight_1_id)
-    flight2 = get_object_or_404(Flight, pk=flight_2_id)
+def compare(request, flight_ids, sort):
+    # list view
+    flight_ids = flight_ids
+    selected_flights = [int(x) for x in flight_ids.split(',')]
+    selected_flights = Flight.objects.filter(id__in=selected_flights)    
+    if sort == 'earlydepart':
+        selected_flights = selected_flights.order_by('departure_time')
+    elif sort == 'latestdepart':
+        selected_flights = selected_flights.order_by('-departure_time')
+    elif sort == 'earlyarrival':
+        selected_flights = selected_flights.order_by('arrival_time')
+    elif sort == 'latestarrival':
+        selected_flights = selected_flights.order_by('-arrival_time')
+    elif sort == 'price':
+        selected_flights = selected_flights.order_by('price')  
     # dictionaries for map view
-    flight1_dict = json.dumps(model_to_dict(flight1), cls=DjangoJSONEncoder)
-    flight2_dict = json.dumps(model_to_dict(flight2), cls=DjangoJSONEncoder)
-    return render(request, 'flightcomparison/flight_compare.html', {'flight1': flight1, 'flight2': flight2, 'sort': sort, 'flight1_dict': flight1_dict, 'flight2_dict':flight2_dict})
+    flights_dict = json.dumps(Flight.get_all_flights_data(), cls=DjangoJSONEncoder)
+    return render(request, 'flightcomparison/flight_compare.html', {'flights': selected_flights, 'flight_ids':flight_ids, 'flights_dict':flights_dict, 'sort': sort})
 
 def api_calls(request):
     if request.method == 'GET':

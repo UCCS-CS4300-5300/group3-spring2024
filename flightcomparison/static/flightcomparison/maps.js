@@ -3,8 +3,7 @@ function map() {
     var flight1 = null, flight2 = null;
     document.addEventListener('DOMContentLoaded', function() {
         var myElement = document.getElementById('map');
-        flight1 = JSON.parse(myElement.getAttribute('data-flight1'));
-        flight2 = JSON.parse(myElement.getAttribute('data-flight2'));  
+        flights_data = Object.values(JSON.parse(myElement.getAttribute('data-flights'))); //converts into array of objects
 
         //intialzing map into the html div tag with id map
 
@@ -13,69 +12,51 @@ function map() {
             center: { lat: 39.84937875926634, lng: -100.11546319759957 },
             mapTypeId: "terrain",
         });
-    
-        // coordinates and details
-        const flightPlan1Coordinates = [
-            { lat: parseFloat(flight1.departure_location_latitude), lng: parseFloat(flight1.departure_location_longitude), name: flight1.departure_location, dep_time: flight1.departure_time },
-            { lat: parseFloat(flight1.layover_location_latitude), lng: parseFloat(flight1.layover_location_longitude), name: flight1.layover_location },
-            { lat: parseFloat(flight1.arrival_location_latitude), lng: parseFloat(flight1.arrival_location_longitude), name: flight1.arrival_location, arr_time: flight1.arrival_time },
-        ];
 
+        flightPlanCoordinates = [];
 
-        console.log(flightPlan1Coordinates,"1")
-        
-    
-        const flightPlan2Coordinates = [
-            { lat: parseFloat(flight2.departure_location_latitude), lng: parseFloat(flight2.departure_location_longitude), name: flight2.departure_location },
-            { lat: parseFloat(flight2.layover_location_latitude), lng: parseFloat(flight2.layover_location_longitude), name: flight2.layover_location },
-            { lat: parseFloat(flight2.arrival_location_latitude), lng: parseFloat(flight2.arrival_location_longitude), name: flight2.arrival_location },
-        ];
-
-        console.log(flightPlan2Coordinates,"2")
+        flights_data.forEach(flight =>{
+            const data = [
+                { lat: parseFloat(flight.departure_location_latitude), lng: parseFloat(flight.departure_location_longitude), name: flight.departure_location, dep_time: flight.departure_time },
+                { lat: parseFloat(flight.layover_location_latitude), lng: parseFloat(flight.layover_location_longitude), name: flight.layover_location },
+                { lat: parseFloat(flight.arrival_location_latitude), lng: parseFloat(flight.arrival_location_longitude), name: flight.arrival_location, arr_time: flight.arrival_time },
+            ]
+            flightPlanCoordinates.push(data);
+        });
     
     
         //creates path
-    
-        const flightPath1 = new google.maps.Polyline({
-            path: flightPlan1Coordinates,
-            geodesic: true,
-            strokeColor: "#0000FF",
-            strokeOpacity: 1.0,
-            strokeWeight: 3,
-        });
-    
-        
-        const flightPath2 = new google.maps.Polyline({
-            path: flightPlan2Coordinates,
-            geodesic: true,
-            strokeColor: "#EF7153",
-            strokeOpacity: 1.0,
-            strokeWeight: 3,
-        });
+
+        flightPaths = [];
+
+        flightPlanCoordinates.forEach(flight =>{
+            const path = new google.maps.Polyline({
+                path: flight,
+                geodesic: true,
+                strokeColor: getRandomColor(),
+                strokeOpacity: 1.0,
+                strokeWeight: 3,
+            });
+            flightPaths.push(path);
+        })    
     
         //creates markers
-    
-        flightPlan1Coordinates.forEach((coord, index) => {
-            new google.maps.Marker({
-                position: {lat: coord.lat, lng: coord.lng},
-                map: map,
-                title: coord.name,
-                label: (index + 1).toString(),
-            });
-        });
-    
-        flightPlan2Coordinates.forEach((coord, index) => {
-            new google.maps.Marker({
-                position: {lat: coord.lat, lng: coord.lng},
-                map: map,
-                title: coord.name,
-                label: (index + 1).toString(),
+
+        flightPlanCoordinates.forEach(coords => {
+            coords.forEach((coord, index) => {
+                new google.maps.Marker({
+                    position: {lat: parseFloat(coord.lat), lng: parseFloat(coord.lng)},
+                    map: map,
+                    title: coord.name,
+                    label: (index + 1).toString(),
+                });
             });
         });
     
       
-        flightPath1.setMap(map);
-        flightPath2.setMap(map);
+        flightPaths.forEach(path =>{
+            path.setMap(map);
+        })
     
         // To display information of flight path
     
@@ -127,6 +108,24 @@ function map() {
     
 
 }
+
+// Function to generate a random hexadecimal color
+function getRandomColor() {
+    // Generate random values for red, green, and blue components
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+  
+    // Convert the RGB values to hexadecimal format
+    const redHex = red.toString(16).padStart(2, '0');
+    const greenHex = green.toString(16).padStart(2, '0');
+    const blueHex = blue.toString(16).padStart(2, '0');
+  
+    // Construct the hexadecimal color string
+    const hexColor = `#${redHex}${greenHex}${blueHex}`;
+  
+    return hexColor;
+  }
 
 map();
   
