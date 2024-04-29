@@ -65,6 +65,38 @@ class FlightModelTests(TestCase):
 
         #testing functions related to model
         self.assertEqual(flight.__str__(), "CODE: KDEN KGRB")
+'''
+Tests for generic view FlightDetail
+'''
+class GenericViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.flight = Flight.objects.create(
+            user=self.user,
+            departure_location="City A",
+            arrival_location="City B",
+            departure_time=timezone.now(),
+            departure_location_latitude = 1,
+            departure_location_longitude = 1,
+            layover_location = "City C",
+            layover_location_latitude = 1,
+            layover_location_longitude = 1,
+            arrival_location_latitude = 1,
+            arrival_location_longitude = 1,
+            arrival_time=timezone.now(),
+            price=100,
+            seat_number=1
+        )
+
+    def test_get_context_data(self):
+        view = FlightDetail()
+        view.object = self.flight
+
+        data = view.get_context_data()
+
+        self.assertIn('flight_list', data)
+        self.assertIn(self.flight, data['flight_list'])
+
 
 class UserInterfaceTests(TestCase):
     '''
@@ -103,52 +135,6 @@ class UserInterfaceTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     '''
-    Flight Search Data
-    '''
-    def test_flight_search_data(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-    
-    def test_flight_search_post(self):
-        url = reverse('flight_search_data')
-        response = self.client.post(url)
-        self.assertEqual(response.url, 'compare/list')
-        self.assertEqual(response.status_code, 302)
-
-    #Testing different sorting options
-    def test_flight_search_sort_price(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'price': 100, 'sortoption': 'price'})
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-
-    def test_flight_search_sort_early_departure(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'earlydepart'})
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-
-    def test_flight_search_sort_late_departure(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'latestdepart'})
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-
-    def test_flight_search_sort_early_arrival(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'earlyarrival'})
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-    
-    def test_flight_search_sort_late_arrival(self):
-        url = reverse('flight_search_data')
-        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'latestarrival'})
-        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
-        self.assertEqual(response.status_code, 200)
-
-    '''
     Flight_Compare View
     '''
     def test_flight_compare_get_status_code(self):
@@ -180,7 +166,9 @@ class UserInterfaceTests(TestCase):
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
 
-
+'''
+Tests Flight Search 
+'''
 class FlightSearchTests(TestCase):
     def setUp(self):
         # Creates a Flight instance for testing the search functionality.
@@ -202,12 +190,58 @@ class FlightSearchTests(TestCase):
             seat_number=1
         )
 
+    def test_flight_search_data(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_flight_search_post(self):
+        url = reverse('flight_search_data')
+        response = self.client.post(url)
+        self.assertEqual(response.url, 'compare/list')
+        self.assertEqual(response.status_code, 302)
+
+    #Testing different sorting options
     def test_search_by_departure_location(self):
         # Tests flight search functionality filters by departure location.
         response = self.client.get(reverse('flight_search_data'), {'departure_location': 'City A'})
         self.assertContains(response, "City A")
         self.assertNotContains(response, "No flights found.")
+    def test_flight_search_sort_price(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'price': 100, 'sortoption': 'price'})
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
 
+    def test_flight_search_sort_early_departure(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'earlydepart'})
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_flight_search_sort_late_departure(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'latestdepart'})
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_flight_search_sort_early_arrival(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'earlyarrival'})
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
+    
+    def test_flight_search_sort_late_arrival(self):
+        url = reverse('flight_search_data')
+        response = self.client.get(url, {'departure_location': 'City A', 'arrival_location': 'City B', 'departure_time': timezone.now(), 'arrival_time': timezone.now(), 'sortoption': 'latestarrival'})
+        self.assertTemplateUsed(response, 'flightcomparison/flight_search_data.html')
+        self.assertEqual(response.status_code, 200)
+
+class ExceptionTests(TestCase):
+    def test_managepy(self):
+        with self.assertRaises(ImportError):
+            raise ImportError()
 
 def fetch_states():
     try:
