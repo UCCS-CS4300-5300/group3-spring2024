@@ -33,7 +33,7 @@ function autocomplete(dataField, arr, cities, icaos) {
                 
                 containerDiv.appendChild(flightDiv);
             }
-            else if (val.length < 4 && icaos[i].substr(0, val.length).toUpperCase() == val.toUpperCase()){
+            else if (val.length <= 4 && icaos[i].substr(0, val.length).toUpperCase() == val.toUpperCase()){
                 flightDiv = document.createElement("DIV");
                 //highlights matching ICAO code
                 flightDiv.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>" + arr[i].substr(val.length);
