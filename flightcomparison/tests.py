@@ -329,3 +329,44 @@ class TestOpenSkyAPI(unittest.TestCase):
             headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
         )
 
+class CompareViewTestCase(TestCase):
+    def setUp(self):
+        # Create some Flight objects for testing
+        self.user = User.objects.create_user(username='test_user', email='test@example.com', password='password')
+        self.flight1 = Flight.objects.create(user=self.user, departure_location='Location 1', departure_location_latitude=40.7128, departure_location_longitude=-74.0060, layover_location='Location 1', layover_location_latitude=40.7128, layover_location_longitude=-74.0060, arrival_location='Location 2', arrival_location_latitude=34.0522, arrival_location_longitude=-118.2437, departure_time='2024-04-25 10:00:00', arrival_time='2024-04-25 12:00:00', price=100, seat_number=50)
+        self.flight2 = Flight.objects.create(user=self.user, departure_location='Location 3', departure_location_latitude=37.7749, departure_location_longitude=-122.4194, layover_location='Location 3', layover_location_latitude=37.7749, layover_location_longitude=-122.4194, arrival_location='Location 4', arrival_location_latitude=34.0522, arrival_location_longitude=-118.2437, departure_time='2024-04-25 11:00:00', arrival_time='2024-04-25 13:00:00', price=150, seat_number=60)
+
+    def test_compare_view_latest_depart_sort(self):
+        url = reverse('compare/list', args=('1,2', 'latestdepart'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
+        # Check if flights are sorted by departure time descending
+        self.assertQuerysetEqual(response.context['flights'], [self.flight2, self.flight1])
+
+    def test_compare_view_early_arrival_sort(self):
+        url = reverse('compare/list', args=('1,2', 'earlyarrival'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
+        # Check if flights are sorted by arrival time ascending
+        self.assertQuerysetEqual(response.context['flights'], [self.flight1, self.flight2])
+
+    def test_compare_view_latest_arrival_sort(self):
+        url = reverse('compare/list', args=('1,2', 'latestarrival'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
+        # Check if flights are sorted by arrival time descending
+        self.assertQuerysetEqual(response.context['flights'], [self.flight2, self.flight1])
+
+    def test_compare_view_price_sort(self):
+        url = reverse('compare/list', args=('1,2', 'price'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'flightcomparison/flight_compare.html')
+        # Check if flights are sorted by price ascending
+        self.assertQuerysetEqual(response.context['flights'], [self.flight1, self.flight2])
+
+
+
