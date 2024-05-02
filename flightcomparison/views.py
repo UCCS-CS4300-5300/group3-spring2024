@@ -15,7 +15,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from opensky_api import OpenSkyApi
 import requests
-
+from django.http import QueryDict
+import base64
 
 '''
 General Views
@@ -123,3 +124,106 @@ def api_calls(request):
             return JsonResponse({'error': str(e)})
     else:
         return JsonResponse({'error': 'Invalid request method'})
+
+@csrf_exempt
+def arrivals_by_airport_api(request):
+    if request.method == 'POST':
+        url = "https://opensky-network.org/api/flights/arrival?airport={airport}&begin={begin}&end={end}"
+        data = json.loads(request.body)
+        query_params = QueryDict('', mutable=True)
+        query_params.update(data)
+        url_with_params = url.format(**query_params)
+        request_headers = dict(request.headers)
+        try:
+            response = requests.get(url_with_params, headers=request_headers)
+            response.raise_for_status()
+            return JsonResponse(response.json())
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+@csrf_exempt
+def fetch_states_api(request):
+    if request.method == 'POST':
+        url = "https://opensky-network.org/api/states/all"
+        data = {}
+        url_with_params = url
+        request_headers = dict(request.headers)
+        try:
+            response = requests.get(url_with_params, headers=request_headers)
+            response.raise_for_status()
+            return JsonResponse(response.json())
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+@csrf_exempt
+def get_own_states_api(request):
+    if request.method == 'POST':
+        username = 'USERNAME'
+        password = 'PASSWORD'
+        credentials = base64.b64encode(f"{username}:{password}".encode()).decode('utf-8')
+
+        url = "https://opensky-network.org/api/states/own"
+        request_headers = {
+            'Authorization': f'Basic {credentials}'
+        }
+        try:
+            response = requests.get(url, headers=request_headers)
+            response.raise_for_status()
+            return JsonResponse(response.json())
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+@csrf_exempt
+def get_departures_by_airport_api(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        airport = data.get('airport')
+        begin = data.get('begin')
+        end = data.get('end')
+
+        username = 'USERNAME'
+        password = 'PASSWORD'
+        credentials = base64.b64encode(f"{username}:{password}".encode()).decode('utf-8')
+        url = f"https://opensky-network.org/api/flights/arrival?airport={airport}&begin={begin}&end={end}"
+        request_headers = {
+            'Authorization': f'Basic {credentials}'
+        }
+        try:
+            response = requests.get(url, headers=request_headers)
+            response.raise_for_status()
+            return JsonResponse(response.json())
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+@csrf_exempt
+def get_flights_in_time_interval_api(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            begin = data.get('begin')
+            end = data.get('end')
+
+            username = 'USERNAME'
+            password = 'PASSWORD'
+            credentials = base64.b64encode(f"{username}:{password}".encode()).decode('utf-8')
+
+            url = f"https://opensky-network.org/api/flights/all?begin={begin}&end={end}"
+            request_headers = {
+                'Authorization': f'Basic {credentials}'
+            }
+
+            response = requests.get(url, headers=request_headers)
+            response.raise_for_status()
+            return JsonResponse(response.json())
+        except requests.RequestException as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
