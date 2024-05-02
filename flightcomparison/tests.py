@@ -5,11 +5,13 @@ from django.utils import timezone
 from .models import Flight, FlightData
 from .views import FlightDetail
 from .serializers import FlightListView
-
 import unittest
 import requests
 from unittest.mock import patch, MagicMock
 from base64 import b64encode
+import json
+from django.test import Client
+from django.http import JsonResponse
 
 
 class FlightModelTests(TestCase):
@@ -243,156 +245,55 @@ class ExceptionTests(TestCase):
         with self.assertRaises(ImportError):
             raise ImportError()
 
-def fetch_states():
-    try:
-        response = requests.get("https://opensky-network.org/api/states/all")
-        response.raise_for_status()
-        data = response.json()
-        return data
-    except Exception as e:
-        print('Error:', e)
-        raise
 
-def get_own_states():
-    username = 'USERNAME'
-    password = 'PASSWORD'
-    credentials = b64encode(f"{username}:{password}".encode()).decode()
-    headers = {'Authorization': f'Basic {credentials}'}
 
-    try:
-        response = requests.get("https://opensky-network.org/api/states/own", headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return data
-    except Exception as e:
-        print('Error:', e)
-        raise
-
-def get_departures_by_airport(airport, begin, end):
-    username = 'USERNAME'
-    password = 'PASSWORD'
-    credentials = b64encode(f"{username}:{password}".encode()).decode()
-    headers = {'Authorization': f'Basic {credentials}'}
-    params = {'airport': airport, 'begin': begin, 'end': end}
-
-    try:
-        response = requests.get("https://opensky-network.org/api/flights/departure", params=params, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return data
-    except Exception as e:
-        print('Error:', e)
-        raise
-
-def get_arrivals_by_airport(airport, begin, end):
-    username = 'USERNAME'
-    password = 'PASSWORD'
-    credentials = b64encode(f"{username}:{password}".encode()).decode()
-    headers = {'Authorization': f'Basic {credentials}'}
-    params = {'airport': airport, 'begin': begin, 'end': end}
-
-    try:
-        response = requests.get("https://opensky-network.org/api/flights/arrival", params=params, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return data
-    except Exception as e:
-        print('Error:', e)
-        raise
-
-def get_flights_in_time_interval(begin, end):
-    username = 'USERNAME'
-    password = 'PASSWORD'
-    credentials = b64encode(f"{username}:{password}".encode()).decode()
-    headers = {'Authorization': f'Basic {credentials}'}
-    params = {'begin': begin, 'end': end}
-
-    try:
-        response = requests.get("https://opensky-network.org/api/flights/all", params=params, headers=headers)
-        response.raise_for_status()
-        data = response.json()
-        return data
-    except Exception as e:
-        print('Error:', e)
-        raise
-
-class TestOpenSkyAPI(unittest.TestCase):
-    @patch('requests.get')
-    def test_fetch_states(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {'some': 'data'}
-        mock_get.return_value = mock_response
-
-        result = fetch_states()
-
-        self.assertEqual(result, {'some': 'data'})
-        mock_get.assert_called_once_with(
-            "https://opensky-network.org/api/states/all"
-        )
+class TestAPI(TestCase):
+    def setUp(self):
+        self.client = Client()
 
     @patch('requests.get')
-    def test_get_own_states(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {'some': 'data'}
-        mock_get.return_value = mock_response
-
-        result = get_own_states()
-
-        self.assertEqual(result, {'some': 'data'})
-        mock_get.assert_called_once_with(
-            "https://opensky-network.org/api/states/own",
-            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
-        )
+    def test_arrivals_by_airport_api(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {'arrival_flights': [{'flight_id': '123', 'flight_number': 'ABC123'}]}
+        response = self.client.post('/arrivals_by_airport_api', data=json.dumps({'airport': 'JFK', 'begin': '2024-05-01', 'end': '2024-05-02'}), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), {'arrival_flights': [{'flight_id': '123', 'flight_number': 'ABC123'}]})
 
     @patch('requests.get')
-    def test_get_departures_by_airport(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {'some': 'data'}
-        mock_get.return_value = mock_response
-
-        result = get_departures_by_airport('airport', 'begin', 'end')
-
-        self.assertEqual(result, {'some': 'data'})
-        mock_get.assert_called_once_with(
-            "https://opensky-network.org/api/flights/departure",
-            params={'airport': 'airport', 'begin': 'begin', 'end': 'end'},
-            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
-        )
+    def test_fetch_states_api(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {'states': [{'icao24': 'ABC123', 'callsign': 'ABC123'}]}
+        response = self.client.post('/fetch_states_api')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content    ), {'states': [{'icao24': 'ABC123', 'callsign': 'ABC123'}]})
 
     @patch('requests.get')
-    def test_get_arrivals_by_airport(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {'some': 'data'}
-        mock_get.return_value = mock_response
-
-        result = get_arrivals_by_airport('airport', 'begin', 'end')
-
-        self.assertEqual(result, {'some': 'data'})
-        mock_get.assert_called_once_with(
-            "https://opensky-network.org/api/flights/arrival",
-            params={'airport': 'airport', 'begin': 'begin', 'end': 'end'},
-            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
-        )
+    def test_get_own_states_api(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {'own_states': [{'icao24': 'XYZ789', 'callsign': 'XYZ789'}]}
+        response = self.client.post('/get_own_states_api')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), {'own_states': [{'icao24': 'XYZ789', 'callsign': 'XYZ789'}]})
 
     @patch('requests.get')
-    def test_get_flights_in_time_interval(self, mock_get):
-        mock_response = MagicMock()
-        mock_response.raise_for_status.return_value = None
-        mock_response.json.return_value = {'some': 'data'}
-        mock_get.return_value = mock_response
+    def test_get_departures_by_airport_api(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {'departure_flights': [{'flight_id': '456', 'flight_number': 'DEF456'}]}
+        response = self.client.post('/get_departures_by_airport_api', data=json.dumps({'airport': 'LAX', 'begin': '2024-05-01', 'end': '2024-05-02'}), content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content), {'departure_flights': [{'flight_id': '456', 'flight_number': 'DEF456'}]})
 
-        result = get_flights_in_time_interval('begin', 'end')
 
-        self.assertEqual(result, {'some': 'data'})
-        mock_get.assert_called_once_with(
-            "https://opensky-network.org/api/flights/all",
-            params={'begin': 'begin', 'end': 'end'},
-            headers={'Authorization': 'Basic VVNFUk5BTUU6UEFTU1dPUkQ='}
-        )
+    @patch('requests.get')
+    def test_get_flights_in_time_interval_api(self, mock_get):
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {'flights_in_interval': [{'flight_id': '789', 'flight_number': 'GHI789'}]}
+        
+        response = self.client.post('/get_flights_in_time_interval_api',data=json.dumps({'begin': '2024-05-01', 'end': '2024-05-02'}),content_type='application/json')
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response.content),{'flights_in_interval': [{'flight_id': '789', 'flight_number': 'GHI789'}]})
+    
 
 class CompareViewTestCase(TestCase):
     def setUp(self):

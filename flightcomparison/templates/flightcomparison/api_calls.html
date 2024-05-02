@@ -9,7 +9,6 @@
 
 <h2>OpenSky Network API Calls</h2>
 
-<!-- Form for getFlightsByAircraft method -->
 <form id="flightsByAircraftForm" action="/get-flights-by-aircraft/" method="get" target="_blank">
   <label for="icao24Flights">ICAO24:</label><br>
   <input type="text" id="icao24Flights" name="icao24" value="ABC123"><br>
@@ -20,7 +19,6 @@
   <button type="submit" onclick="getFlightsByAircraft()">Get Flights by Aircraft</button>
 </form>
 
-<!-- Form for getFlightsFromInterval method -->
 <form id="flightsFromIntervalForm" action="/get-flights-from-interval/" method="get" target="_blank">
   <label for="beginInterval">Begin:</label><br>
   <input type="text" id="beginInterval" name="begin" value="1609459200"><br>
@@ -29,7 +27,6 @@
   <button type="submit" onclick="getFlightsFromInterval()">Get Flights from Interval</button>
 </form>
 
-<!-- Form for getMyStates method -->
 <form id="myStatesForm" action="/get-my-states/" method="get" target="_blank">
   <label for="timeSecsStates">Time (secs):</label><br>
   <input type="text" id="timeSecsStates" name="time_secs" value="1609459200"><br>
@@ -40,7 +37,6 @@
   <button type="submit" onclick="getMyStates()">Get My States</button>
 </form>
 
-<!-- Form for Arrivals by Airport -->
 <form id="arrivalsByAirportForm" action="/get-arrivals-by-airport/" method="get" target="_blank">
   <label for="airportArrivals">Airport:</label><br>
   <input type="text" id="airportArrivals" name="airport" value="EDDF"><br>
@@ -51,7 +47,6 @@
   <button type="submit" onclick="getArrivalsByAirport()">Get Arrivals by Airport</button>
 </form>
 
-<!-- Form for Departures by Airport -->
 <form id="departuresByAirportForm" action="/get-departures-by-airport/" method="get" target="_blank">
   <label for="airportDepartures">Airport:</label><br>
   <input type="text" id="airportDepartures" name="airport" value="EDDF"><br>
@@ -62,15 +57,16 @@
   <button type="submit" onclick="getDeparturesByAirport()">Get Departures by Airport</button>
 </form>
 
-<!-- Button to get states -->
 <button id="getStatesButton">Get States</button>
 
 <script>
 function fetchStates() {
-    fetch("https://opensky-network.org/api/states/all")
+    fetch("/fetch_states_api", {
+        method: 'POST'
+    })
     .then(response => response.json())
     .then(data => {
-        console.log(data); // You can handle the response data here
+        console.log(data); 
         alert("Response received. Check console for details.");
     })
     .catch(error => {
@@ -82,20 +78,19 @@ function fetchStates() {
 document.getElementById("getStatesButton").addEventListener("click", fetchStates);
 
 function getOwnStates() {
-
-    // api is down atm so do not have these yet
     const username = 'USERNAME';
     const password = 'PASSWORD';
     const credentials = btoa(`${username}:${password}`);
 
-    fetch("https://opensky-network.org/api/states/own", {
+    fetch("/get_own_states_api", {
+        method: 'POST',
         headers: {
             'Authorization': `Basic ${credentials}`
         }
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data); // You can handle the response data here
+        console.log(data);
         alert("Response received. Check console for details.");
     })
     .catch(error => {
@@ -109,19 +104,20 @@ function getDeparturesByAirport() {
     const begin = document.getElementById("beginArrivals").value;
     const end = document.getElementById("endArrivals").value;
 
-    // api is down atm so do not have these yet
-    const username = 'USERNAME';
-    const password = 'PASSWORD';
-    const credentials = btoa(`${username}:${password}`);
-
-    fetch(`https://opensky-network.org/api/flights/arrival?airport=${airport}&begin=${begin}&end=${end}`, {
+    fetch("/get_departures_by_airport_api", {
+        method: 'POST',
         headers: {
-            'Authorization': `Basic ${credentials}`
-        }
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            airport: airport,
+            begin: begin,
+            end: end
+        })
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data); // You can handle the response data here
+        console.log(data); 
         alert("Response received. Check console for details.");
     })
     .catch(error => {
@@ -139,40 +135,56 @@ function getArrivalsByAirport() {
     const username = 'USERNAME';
     const password = 'PASSWORD';
     const credentials = btoa(`${username}:${password}`);
+    const url = '/arrivals_by_airport_api'
+    const params = {
+        airport: airport,
+        begin: begin,
+        end: end
+    };
 
-    fetch(`https://opensky-network.org/api/flights/arrival?airport=${airport}&begin=${begin}&end=${end}`, {
+    fetch(url, {
+        method: 'POST',
         headers: {
             'Authorization': `Basic ${credentials}`
-        }
+        },
+        body: JSON.stringify(params)
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log(data); // You can handle the response data here
-        alert("Response received. Check console for details.");
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(results => {
+        displayResults(results);
     })
     .catch(error => {
         console.error('Error:', error);
-        alert("An error occurred. Check console for details.");
     });
 }
 
 function getFlightsInTimeInterval() {
-    // api is down atm so do not have these yet
     const username = 'USERNAME';
     const password = 'PASSWORD';
     const credentials = btoa(`${username}:${password}`);
 
-    begin = document.getElementById("begin").value;
-    end = document.getElementById("end").value;
+    const begin = document.getElementById("begin").value;
+    const end = document.getElementById("end").value;
 
-    fetch(`https://opensky-network.org/api/flights/all?begin=${begin}&end=${end}`, {
+    fetch("/get_flights_in_time_interval_api", {
+        method: 'POST',
         headers: {
+            'Content-Type': 'application/json',
             'Authorization': `Basic ${credentials}`
-        }
+        },
+        body: JSON.stringify({
+            begin: begin,
+            end: end
+        })
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data); // You can handle the response data here
+        console.log(data); 
         alert("Response received. Check console for details.");
     })
     .catch(error => {
